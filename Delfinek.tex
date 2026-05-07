@@ -7,8 +7,10 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{enumitem}
-
+\usepackage{graphicx}
 \geometry{margin=2.5cm}
+\usepackage{float}
+
 
 % Dane dokumentu
 \title{Wstępny zarys projektu}
@@ -232,7 +234,7 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 
 \noindent \textbf{Kryteria niefunkcjonalne}
 \begin{itemize}
-    \item Czas dostarczenia wiadomości w systemie nie powinien przekraczać 2 sekund.
+    \item Czas dostarczenia wiadomości w systemie nie powinien przekraczać 5 sekund.
     \item System działa poprawnie przy jednoczesnej komunikacji wielu użytkowników (np. 50 aktywnych rozmów).
     \item Wiadomości są prawidłowo zapisywane w bazie danych i zabezpieczone przed wyciekami.
     \item Komunikacja jest zabezpieczona (szyfrowanie HTTPS, autoryzacja użytkowników).
@@ -290,7 +292,7 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 
 \noindent \textbf{Kryteria niefunkcjonalne}
 \begin{itemize}
-    \item Czas ładowania grafiku nie powinien przekraczać 2 sekund.
+    \item Czas ładowania grafiku nie powinien przekraczać 5 sekund.
     \item System działa poprawnie przy jednoczesnym dostępie wielu instruktorów (20  użytkowników).
     \item Dane grafiku są poprawnie pobierane i zapisywane w bazie danych oraz zabezpieczone przed utratą.
     \item System zapewnia aktualność danych (brak rozbieżności między bazą a widokiem użytkownika).
@@ -347,7 +349,7 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 
 \noindent \textbf{Kryteria niefunkcjonalne}
 \begin{itemize}
-    \item Czas zapisu nowych zajęć nie powinien przekraczać 2 sekund.
+    \item Czas zapisu nowych zajęć nie powinien przekraczać 5 sekund.
     \item System działa poprawnie przy jednoczesnej edycji harmonogramu przez wielu administratorów (5 użytkowników).
     \item Dane harmonogramu są poprawnie zapisywane w bazie danych i zabezpieczone przed wyciekami.
     \item System zapewnia spójność danych (brak możliwości podwójnej rezerwacji toru lub instruktora).
@@ -411,7 +413,7 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 
 \noindent \textbf{Kryteria niefunkcjonalne}
 \begin{itemize}
-    \item Czas edycji i zapisania zmian nie powinien przekraczać 2 sekund.
+    \item Czas edycji i zapisania zmian nie powinien przekraczać 5 sekund.
     \item Powiadomienia w systemie są dostarczane w czasie do 5 sekund a wiadomości mailowe do 5 minut.
     \item System działa poprawnie przy jednoczesnej edycji harmonogramu przez wielu administratorów (5 użytkowników).
     \item Dane są poprawnie zapisywane w bazie danych i zabezpieczone przed utratą.
@@ -447,6 +449,920 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
     \item \textbf{Given} zmiany w harmonogramie zostały zapisane
     \item \textbf{When} użytkownik otwiera grafik
     \item \textbf{Then} system wyświetla zaktualizowane dane
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę tworzyć nowe zajęcia (data, godzina, instruktor, tor), aby budować harmonogram.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę zarządzania harmonogramem.
+    \item Użytkownik wybiera opcję dodania nowych zajęć.
+    \item Użytkownik wprowadza dane zajęć (data, godzina, instruktor, tor).
+    \item System sprawdza dostępność wybranego instruktora oraz toru w podanym terminie.
+    \item System weryfikuje poprawność wprowadzonych danych.
+    \item W przypadku braku konfliktów system zapisuje nowe zajęcia w harmonogramie, i wyświetla komunikat o powodzeniu.
+    \item System aktualizuje grafik instruktorów oraz dostępność torów.
+    \item W przypadku konfliktu terminów lub błędnych danych system blokuje utworzenie zajęć i wyświetla komunikat o błędzie.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas tworzenia i zapisania nowych zajęć nie powinien przekraczać 5 sekund.
+    \item System umożliwia jednoczesne tworzenie zajęć przez wielu administratorów (5 użytkowników).
+    \item Dane nowych zajęć są poprawnie zapisywane w bazie danych i zabezpieczone przed utratą.
+    \item System zapewnia spójność danych (brak konfliktów terminów, torów i instruktorów).
+    \item Interfejs dodawania zajęć jest intuicyjny i czytelny.
+    \item System waliduje poprawność wprowadzanych danych przed zapisaniem zajęć.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Utworzenie nowych zajęć}
+\begin{itemize}
+    \item \textbf{Given} administrator jest zalogowany i otwiera formularz dodawania zajęć
+    \item \textbf{When} wprowadza poprawne dane zajęć i klika „Zapisz”
+    \item \textbf{Then} system zapisuje nowe zajęcia w harmonogramie
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} nowe zajęcia zostały utworzone
+    \item \textbf{When} użytkownik otwiera harmonogram
+    \item \textbf{Then} system wyświetla nowe zajęcia w grafiku
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt instruktora lub toru}
+\begin{itemize}
+    \item \textbf{Given} wybrany instruktor lub tor jest już zajęty w podanym terminie
+    \item \textbf{When} administrator próbuje utworzyć nowe zajęcia
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\textbf{Scenariusz 4: Walidacja danych formularza}
+\begin{itemize}
+    \item \textbf{Given} administrator wypełnia formularz dodawania zajęć
+    \item \textbf{When} pozostawia wymagane pola puste lub wpisuje błędne dane
+    \item \textbf{Then} system wyświetla komunikaty walidacyjne i nie zapisuje zajęć
+\end{itemize}
+
+\vspace{0,5cm}
+
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę usuwać zajęcia, aby reagować na sytuacje wyjątkowe.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia do usunięcia.
+    \item System wyświetla okno potwierdzenia usunięcia.
+    \item Użytkownik potwierdza usunięcie zajęć.
+    \item System usuwa zajęcia z harmonogramu.
+    \item System aktualizuje grafik instruktorów oraz dostępność torów.
+    \item System wyświetla komunikat o poprawnym usunięciu zajęć.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas usunięcia zajęć nie powinien przekraczać 5 sekund.
+    \item System zapewnia spójność danych po usunięciu zajęć.
+    \item Dane są poprawnie aktualizowane w bazie danych.
+    \item Interfejs usuwania zajęć jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Usunięcie zajęć}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera istniejące zajęcia
+    \item \textbf{When} potwierdza ich usunięcie
+    \item \textbf{Then} system usuwa zajęcia z harmonogramu
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} zajęcia zostały usunięte
+    \item \textbf{When} użytkownik otwiera harmonogram
+    \item \textbf{Then} system nie wyświetla usuniętych zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Anulowanie usunięcia}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera opcję usunięcia zajęć
+    \item \textbf{When} anuluje operację
+    \item \textbf{Then} system pozostawia zajęcia bez zmian
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura (administrator) chcę nadawać role (instruktor, pracownik biura) użytkownikom w celu kontroli dostępu.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Administrator przechodzi do panelu zarządzania użytkownikami.
+    \item Administrator wybiera użytkownika z listy.
+    \item Administrator wybiera nową rolę dla użytkownika.
+    \item System sprawdza poprawność uprawnień administratora.
+    \item System zapisuje zmiany ról użytkownika.
+    \item System aktualizuje poziom dostępu użytkownika.
+    \item System wyświetla komunikat o poprawnym nadaniu roli.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas zmiany roli użytkownika nie powinien przekraczać 5 sekund.
+    \item System zapewnia bezpieczeństwo i poprawność uprawnień użytkowników.
+    \item Zmiany ról są poprawnie zapisywane w bazie danych.
+    \item Interfejs zarządzania rolami jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Nadanie roli użytkownikowi}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera użytkownika
+    \item \textbf{When} nadaje mu nową rolę i zapisuje zmiany
+    \item \textbf{Then} system aktualizuje uprawnienia użytkownika
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak uprawnień}
+\begin{itemize}
+    \item \textbf{Given} użytkownik bez roli administratora próbuje zmienić role
+    \item \textbf{When} wykonuje operację nadania roli
+    \item \textbf{Then} system blokuje dostęp i wyświetla komunikat o braku uprawnień
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja dostępu}
+\begin{itemize}
+    \item \textbf{Given} rola użytkownika została zmieniona
+    \item \textbf{When} użytkownik loguje się ponownie
+    \item \textbf{Then} system przydziela dostęp zgodny z nową rolą
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę wysyłać powiadomienia i komunikaty do klientów oraz instruktorów, w celu informowania o zmianach, remontach lub ograniczeniach.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do panelu komunikatów.
+    \item Użytkownik tworzy nową wiadomość lub powiadomienie.
+    \item Użytkownik wybiera grupę odbiorców (klienci, instruktorzy lub wszyscy).
+    \item Użytkownik wpisuje treść komunikatu i zatwierdza wysyłkę.
+    \item System zapisuje komunikat oraz wysyła powiadomienia do wybranych użytkowników.
+    \item System wyświetla potwierdzenie poprawnego wysłania wiadomości.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund.
+    \item Wiadomości mailowe są wysyłane w czasie do 5 minut.
+    \item System zapewnia poprawność dostarczenia komunikatów do wybranych odbiorców.
+    \item Interfejs tworzenia komunikatów jest intuicyjny i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wysłanie komunikatu}
+\begin{itemize}
+    \item \textbf{Given} administrator tworzy nowy komunikat
+    \item \textbf{When} wybiera odbiorców i zatwierdza wysyłkę
+    \item \textbf{Then} system wysyła powiadomienia do wybranych użytkowników
+\end{itemize}
+
+\textbf{Scenariusz 2: Komunikat do wszystkich użytkowników}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera wszystkich odbiorców
+    \item \textbf{When} wysyła komunikat
+    \item \textbf{Then} system dostarcza wiadomość klientom oraz instruktorom
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak treści komunikatu}
+\begin{itemize}
+    \item \textbf{Given} administrator tworzy nowy komunikat
+    \item \textbf{When} próbuje wysłać pustą wiadomość
+    \item \textbf{Then} system wyświetla komunikat walidacyjny i blokuje wysyłkę
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę przydzielać instruktorów lub tory do zajęć, które mają je jeszcze nieprzydzielone.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia bez przypisanego instruktora lub toru.
+    \item Użytkownik wybiera dostępnego instruktora lub tor.
+    \item System sprawdza dostępność wybranego instruktora oraz toru.
+    \item W przypadku braku konfliktów system zapisuje przydział.
+    \item System aktualizuje harmonogram zajęć.
+    \item System wyświetla komunikat o poprawnym przypisaniu zasobów.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas przypisania instruktora lub toru nie powinien przekraczać 5 sekund.
+    \item System zapewnia spójność danych i brak konfliktów terminów.
+    \item Zmiany są poprawnie zapisywane w bazie danych.
+    \item Interfejs przypisywania zasobów jest intuicyjny i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Przypisanie instruktora}
+\begin{itemize}
+    \item \textbf{Given} istnieją zajęcia bez przypisanego instruktora
+    \item \textbf{When} administrator wybiera instruktora i zapisuje zmiany
+    \item \textbf{Then} system przypisuje instruktora do zajęć
+\end{itemize}
+
+\textbf{Scenariusz 2: Przypisanie toru}
+\begin{itemize}
+    \item \textbf{Given} istnieją zajęcia bez przypisanego toru
+    \item \textbf{When} administrator wybiera tor i zapisuje zmiany
+    \item \textbf{Then} system przypisuje tor do zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt dostępności}
+\begin{itemize}
+    \item \textbf{Given} wybrany instruktor lub tor jest zajęty
+    \item \textbf{When} administrator próbuje zapisać przydział
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę zalogować się do systemu, aby uzyskać dostęp do swojego profilu i zapisów w harmonogramie.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada aktywne konto w systemie.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do formularza logowania.
+    \item Użytkownik wprowadza login oraz hasło.
+    \item System weryfikuje poprawność danych logowania.
+    \item W przypadku poprawnych danych system loguje użytkownika.
+    \item System przekierowuje użytkownika do panelu klienta.
+    \item W przypadku błędnych danych system wyświetla komunikat o błędzie.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas logowania nie powinien przekraczać 5 sekund.
+    \item Dane logowania są przesyłane i przechowywane w sposób bezpieczny.
+    \item System zapewnia ochronę przed nieautoryzowanym dostępem.
+    \item Interfejs logowania jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Poprawne logowanie}
+\begin{itemize}
+    \item \textbf{Given} klient posiada aktywne konto
+    \item \textbf{When} wprowadza poprawny login i hasło
+    \item \textbf{Then} system loguje użytkownika i wyświetla panel klienta
+\end{itemize}
+
+\textbf{Scenariusz 2: Błędne dane logowania}
+\begin{itemize}
+    \item \textbf{Given} klient znajduje się na stronie logowania
+    \item \textbf{When} wprowadza niepoprawny login lub hasło
+    \item \textbf{Then} system wyświetla komunikat o błędzie i nie loguje użytkownika
+\end{itemize}
+
+\textbf{Scenariusz 3: Dostęp do harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} klient został poprawnie zalogowany
+    \item \textbf{When} przechodzi do harmonogramu
+    \item \textbf{Then} system wyświetla jego zapisy na zajęcia
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę przeglądać listę dostępnych zajęć z podziałem na dni i godziny, aby wybrać odpowiedni termin dla siebie.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu dostępnych zajęć.
+    \item System pobiera aktualną listę zajęć.
+    \item System wyświetla zajęcia z podziałem na dni oraz godziny.
+    \item Użytkownik może przeglądać szczegóły zajęć (instruktor, tor, liczba miejsc).
+    \item Użytkownik wybiera interesujący go termin zajęć.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia harmonogramu nie powinien przekraczać 5 sekund.
+    \item System wyświetla wyłącznie aktualne i dostępne zajęcia.
+    \item Dane harmonogramu są zgodne z aktualnym planem zajęć.
+    \item Interfejs harmonogramu jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie listy zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient jest zalogowany do systemu
+    \item \textbf{When} otwiera harmonogram zajęć
+    \item \textbf{Then} system wyświetla listę dostępnych zajęć z podziałem na dni i godziny
+\end{itemize}
+
+\textbf{Scenariusz 2: Wyświetlenie szczegółów zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient przegląda harmonogram zajęć
+    \item \textbf{When} wybiera konkretne zajęcia
+    \item \textbf{Then} system wyświetla szczegóły wybranego terminu
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak dostępnych zajęć}
+\begin{itemize}
+    \item \textbf{Given} w systemie nie ma dostępnych zajęć
+    \item \textbf{When} klient otwiera harmonogram
+    \item \textbf{Then} system wyświetla informację o braku dostępnych terminów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę móc anulować zapis na zajęcia, aby móc zwolnić miejsce.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu oraz zapisany na zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do swojego harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia, z których chce się wypisać.
+    \item System wyświetla opcję anulowania zapisu.
+    \item Użytkownik potwierdza anulowanie zapisu.
+    \item System usuwa klienta z listy uczestników zajęć.
+    \item System aktualizuje liczbę dostępnych miejsc.
+    \item System wyświetla komunikat o poprawnym anulowaniu zapisu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas anulowania zapisu nie powinien przekraczać 5 sekund.
+    \item System poprawnie aktualizuje liczbę wolnych miejsc.
+    \item Dane są poprawnie zapisywane w bazie danych.
+    \item Interfejs anulowania zapisu jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Anulowanie zapisu}
+\begin{itemize}
+    \item \textbf{Given} klient jest zapisany na zajęcia
+    \item \textbf{When} wybiera opcję anulowania zapisu i potwierdza operację
+    \item \textbf{Then} system usuwa klienta z listy uczestników
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja liczby miejsc}
+\begin{itemize}
+    \item \textbf{Given} klient anulował zapis na zajęcia
+    \item \textbf{When} inny użytkownik przegląda dostępne zajęcia
+    \item \textbf{Then} system wyświetla zaktualizowaną liczbę wolnych miejsc
+\end{itemize}
+
+\textbf{Scenariusz 3: Anulowanie operacji}
+\begin{itemize}
+    \item \textbf{Given} klient wybiera opcję wypisania się z zajęć
+    \item \textbf{When} anuluje operację
+    \item \textbf{Then} system pozostawia zapis na zajęcia bez zmian
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę widzieć szczegóły zajęć, na które jestem zapisany (instruktor, tor, godzina), aby być przygotowanym.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu oraz zapisany na co najmniej jedne zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do swojego harmonogramu.
+    \item System pobiera listę zajęć przypisanych do klienta.
+    \item System wyświetla listę zapisanych zajęć.
+    \item Użytkownik wybiera konkretne zajęcia.
+    \item System wyświetla szczegóły zajęć (instruktor, tor, data, godzina).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia szczegółów zajęć nie powinien przekraczać 5 sekund.
+    \item System wyświetla aktualne dane zgodne z harmonogramem.
+    \item Dostęp do szczegółów jest ograniczony do zalogowanego użytkownika.
+    \item Interfejs prezentacji szczegółów zajęć jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie szczegółów zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient jest zapisany na zajęcia
+    \item \textbf{When} wybiera konkretne zajęcia w harmonogramie
+    \item \textbf{Then} system wyświetla szczegóły (instruktor, tor, godzina)
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak zapisów na zajęcia}
+\begin{itemize}
+    \item \textbf{Given} klient nie jest zapisany na żadne zajęcia
+    \item \textbf{When} otwiera harmonogram
+    \item \textbf{Then} system informuje o braku zapisów
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja danych zajęć}
+\begin{itemize}
+    \item \textbf{Given} dane zajęć zostały zmienione przez administratora
+    \item \textbf{When} klient otwiera szczegóły zajęć
+    \item \textbf{Then} system wyświetla zaktualizowane informacje
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę odzyskać hasło, aby móc ponownie uzyskać dostęp do konta.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada konto w systemie i ma dostęp do adresu e-mail przypisanego do konta.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do formularza odzyskiwania hasła.
+    \item Użytkownik podaje adres e-mail powiązany z kontem.
+    \item System weryfikuje poprawność adresu e-mail.
+    \item System generuje link do resetu hasła i wysyła go na e-mail użytkownika.
+    \item Użytkownik otwiera link i ustawia nowe hasło.
+    \item System zapisuje nowe hasło i umożliwia logowanie.
+    \item System wyświetla komunikat o poprawnej zmianie hasła.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Link do resetu hasła powinien być ważny przez określony czas (np. 15 minut).
+    \item Czas wysłania e-maila nie powinien przekraczać 5 minut.
+    \item System zapewnia bezpieczeństwo procesu odzyskiwania hasła.
+    \item Interfejs odzyskiwania hasła jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Poprawne odzyskanie hasła}
+\begin{itemize}
+    \item \textbf{Given} klient wprowadza poprawny adres e-mail
+    \item \textbf{When} wysyła żądanie resetu hasła
+    \item \textbf{Then} system wysyła link do resetu hasła na e-mail
+\end{itemize}
+
+\textbf{Scenariusz 2: Nieistniejący e-mail}
+\begin{itemize}
+    \item \textbf{Given} użytkownik podaje adres e-mail
+    \item \textbf{When} adres nie istnieje w systemie
+    \item \textbf{Then} system wyświetla komunikat o braku konta
+\end{itemize}
+
+\textbf{Scenariusz 3: Zmiana hasła}
+\begin{itemize}
+    \item \textbf{Given} użytkownik otrzymał aktywny link do resetu hasła
+    \item \textbf{When} ustawia nowe hasło i zatwierdza
+    \item \textbf{Then} system zapisuje nowe hasło i umożliwia logowanie
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę otrzymywać wszystkie istotne komunikaty i powiadomienia o zmianach w harmonogramie oraz ograniczeniach obiektu.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada aktywne konto w systemie oraz ma włączone powiadomienia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Administrator tworzy komunikat lub powiadomienie.
+    \item System identyfikuje użytkowników, których dotyczą zmiany.
+    \item System wysyła powiadomienie do klientów.
+    \item Użytkownik otrzymuje powiadomienie w systemie oraz/lub e-mail.
+    \item Użytkownik może wyświetlić szczegóły komunikatu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund.
+    \item Wiadomości e-mail są dostarczane w czasie do 5 minut.
+    \item System zapewnia dostarczenie komunikatów do właściwych odbiorców.
+    \item Użytkownik ma możliwość łatwego przeglądania historii powiadomień.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Otrzymanie powiadomienia o zmianie}
+\begin{itemize}
+    \item \textbf{Given} administrator wysyła komunikat o zmianie w harmonogramie
+    \item \textbf{When} system przetwarza komunikat
+    \item \textbf{Then} klient otrzymuje powiadomienie
+\end{itemize}
+
+\textbf{Scenariusz 2: Otrzymanie komunikatu o ograniczeniach obiektu}
+\begin{itemize}
+    \item \textbf{Given} administrator publikuje informację o ograniczeniach obiektu
+    \item \textbf{When} komunikat jest wysyłany
+    \item \textbf{Then} system dostarcza powiadomienie do klientów
+\end{itemize}
+
+\textbf{Scenariusz 3: Przegląd historii powiadomień}
+\begin{itemize}
+    \item \textbf{Given} klient otrzymał wcześniejsze powiadomienia
+    \item \textbf{When} otwiera sekcję powiadomień
+    \item \textbf{Then} system wyświetla listę wszystkich istotnych komunikatów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę widzieć harmonogram moich zajęć, aby wiedzieć kiedy prowadzę zajęcia.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do swojego harmonogramu.
+    \item System pobiera zajęcia przypisane do instruktora.
+    \item System wyświetla listę zajęć z podziałem na dni i godziny.
+    \item Instruktor może podejrzeć szczegóły zajęć (tor, liczba uczestników).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia harmonogramu nie powinien przekraczać 5 sekund.
+    \item System wyświetla wyłącznie zajęcia przypisane do zalogowanego instruktora.
+    \item Dane harmonogramu są zgodne z aktualnym planem zajęć.
+    \item Interfejs harmonogramu jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie harmonogramu instruktora}
+\begin{itemize}
+    \item \textbf{Given} instruktor jest zalogowany do systemu
+    \item \textbf{When} przechodzi do swojego harmonogramu
+    \item \textbf{Then} system wyświetla jego zaplanowane zajęcia
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak przypisanych zajęć}
+\begin{itemize}
+    \item \textbf{Given} instruktor nie ma przypisanych zajęć
+    \item \textbf{When} otwiera harmonogram
+    \item \textbf{Then} system wyświetla informację o braku zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} harmonogram instruktora został zmieniony
+    \item \textbf{When} instruktor ponownie otwiera harmonogram
+    \item \textbf{Then} system wyświetla zaktualizowane dane
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę widzieć listę kursantów zapisanych na dane zajęcia i móc po kliknięciu zobaczyć informacje o kliencie, takie jak poziom zaawansowania, aby dostosować trening.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora i ma przypisane zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do swojego harmonogramu.
+    \item Instruktor wybiera konkretne zajęcia.
+    \item System wyświetla listę zapisanych kursantów.
+    \item Instruktor wybiera konkretnego klienta z listy.
+    \item System wyświetla szczegóły klienta (np. poziom zaawansowania, podstawowe informacje).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia listy kursantów i danych klienta nie powinien przekraczać 2 sekund.
+    \item Dostęp do danych klientów jest ograniczony wyłącznie do przypisanych instruktorów.
+    \item Dane są aktualne i zgodne z systemem zapisów.
+    \item Interfejs prezentacji listy kursantów i szczegółów klienta jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie listy kursantów}
+\begin{itemize}
+    \item \textbf{Given} instruktor wybiera zajęcia
+    \item \textbf{When} otwiera listę uczestników
+    \item \textbf{Then} system wyświetla kursantów zapisanych na zajęcia
+\end{itemize}
+
+\textbf{Scenariusz 2: Wyświetlenie szczegółów klienta}
+\begin{itemize}
+    \item \textbf{Given} instruktor widzi listę kursantów
+    \item \textbf{When} wybiera konkretnego klienta
+    \item \textbf{Then} system wyświetla informacje o kliencie, w tym poziom zaawansowania
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak kursantów na zajęciach}
+\begin{itemize}
+    \item \textbf{Given} na dane zajęcia nie zapisano żadnych klientów
+    \item \textbf{When} instruktor otwiera listę uczestników
+    \item \textbf{Then} system wyświetla informację o braku kursantów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę być powiadamiany o zmianach w swoim grafiku, a także o nowych zajęciach i nowych kursantach, aby na bieżąco reagować na aktualizacje i odpowiednio przygotować się do prowadzenia zajęć.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora i ma przypisane zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item System monitoruje zmiany w harmonogramie zajęć przypisanych do instruktora.
+    \item System wykrywa modyfikacje takie jak zmiana godziny, toru, daty lub listy uczestników.
+    \item System identyfikuje instruktora jako odbiorcę powiadomienia.
+    \item System generuje odpowiedni komunikat (zmiana grafiku, nowe zajęcia, nowi kursanci).
+    \item System wysyła powiadomienie w aplikacji oraz opcjonalnie e-mail.
+    \item Instruktor może otworzyć powiadomienie i przejść do szczegółów zajęć.
+    \item System archiwizuje wysłane powiadomienia w historii użytkownika.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund od wystąpienia zdarzenia.
+    \item Wiadomości e-mail są wysyłane w czasie do 5 minut.
+    \item System zapewnia niezawodne dostarczenie powiadomień do właściwego instruktora.
+    \item Powiadomienia są dostępne w historii przez minimum 30 dni.
+    \item Interfejs powiadomień jest czytelny i umożliwia szybkie przejście do szczegółów zajęć.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Powiadomienie o zmianie grafiku}
+\begin{itemize}
+    \item \textbf{Given} harmonogram instruktora został zmodyfikowany przez administratora
+    \item \textbf{When} system zapisuje zmiany w zajęciach
+    \item \textbf{Then} instruktor otrzymuje powiadomienie o zmianie terminu lub szczegółów zajęć
+\end{itemize}
+
+\textbf{Scenariusz 2: Powiadomienie o nowych zajęciach}
+\begin{itemize}
+    \item \textbf{Given} administrator przypisuje nowe zajęcia do instruktora
+    \item \textbf{When} zajęcia zostają zapisane w systemie
+    \item \textbf{Then} instruktor otrzymuje informację o nowych zajęciach wraz z ich szczegółami
+\end{itemize}
+
+\textbf{Scenariusz 3: Powiadomienie o nowych kursantach}
+\begin{itemize}
+    \item \textbf{Given} do zajęć zostali zapisani nowi kursanci
+    \item \textbf{When} system aktualizuje listę uczestników
+    \item \textbf{Then} instruktor otrzymuje powiadomienie o nowych zapisach wraz z liczbą uczestników
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę móc komunikować się ze swoimi klientami przy użyciu czatu, aby móc odpowiedzieć na ich pytania.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora, a także ma przypisanych klientów do zajęć.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do sekcji czatu.
+    \item System wyświetla listę dostępnych rozmów z klientami.
+    \item Instruktor wybiera konkretnego klienta.
+    \item System otwiera okno konwersacji.
+    \item Instruktor wysyła wiadomość do klienta.
+    \item System zapisuje wiadomość i dostarcza ją do klienta.
+    \item Klient może odpowiedzieć w ramach tej samej konwersacji.
+    \item System wyświetla historię rozmowy w chronologicznej kolejności.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Wiadomości są dostarczane w czasie rzeczywistym (do kilku sekund).
+    \item System zapewnia poufność i bezpieczeństwo komunikacji.
+    \item Historia czatu jest dostępna dla obu stron rozmowy.
+    \item Interfejs czatu jest czytelny i umożliwia łatwą wymianę wiadomości.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wysłanie wiadomości do klienta}
+\begin{itemize}
+    \item \textbf{Given} instruktor otwiera czat z klientem
+    \item \textbf{When} wysyła wiadomość
+    \item \textbf{Then} klient otrzymuje wiadomość w czasie rzeczywistym
+\end{itemize}
+
+\textbf{Scenariusz 2: Odbiór odpowiedzi od klienta}
+\begin{itemize}
+    \item \textbf{Given} klient odpowiada w czacie
+    \item \textbf{When} wiadomość zostaje wysłana
+    \item \textbf{Then} instruktor widzi odpowiedź w konwersacji
+\end{itemize}
+
+\textbf{Scenariusz 3: Wyświetlenie historii rozmowy}
+\begin{itemize}
+    \item \textbf{Given} istnieje historia czatu
+    \item \textbf{When} instruktor otwiera konwersację
+    \item \textbf{Then} system wyświetla pełną historię wiadomości w kolejności chronologicznej
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę otrzymywać powiadomienia o pytaniach klientów, aby móc szybko odpowiadać na ich zapytania.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę pracownika biura (administratora).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Klient wysyła pytanie poprzez system (np. czat lub formularz kontaktowy).
+    \item System rejestruje nowe zgłoszenie od klienta.
+    \item System identyfikuje pracownika biura jako odbiorcę powiadomienia.
+    \item System generuje powiadomienie o nowym pytaniu.
+    \item System wysyła powiadomienie w aplikacji oraz/lub e-mail.
+    \item Pracownik biura otrzymuje powiadomienie i może przejść do czatu z klientem.
+    \item System otwiera okno konwersacji z danym klientem.
+    \item Pracownik może odpowiedzieć na pytanie w ramach czatu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund od wysłania pytania przez klienta.
+    \item Wiadomości e-mail są dostarczane w czasie do 5 minut.
+    \item System zapewnia przypisanie zgłoszeń do właściwego pracownika biura.
+    \item Historia zgłoszeń i czatu jest dostępna w systemie.
+    \item Interfejs czatu umożliwia szybkie przejście z powiadomienia do rozmowy.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Otrzymanie powiadomienia o pytaniu klienta}
+\begin{itemize}
+    \item \textbf{Given} klient wysyła pytanie przez system
+    \item \textbf{When} system rejestruje zgłoszenie
+    \item \textbf{Then} pracownik biura otrzymuje powiadomienie
+\end{itemize}
+
+\textbf{Scenariusz 2: Przejście do czatu z klientem}
+\begin{itemize}
+    \item \textbf{Given} pracownik otrzymał powiadomienie o pytaniu
+    \item \textbf{When} klika w powiadomienie
+    \item \textbf{Then} system otwiera czat z odpowiednim klientem
+\end{itemize}
+
+\textbf{Scenariusz 3: Odpowiedź na pytanie}
+\begin{itemize}
+    \item \textbf{Given} otwarty jest czat z klientem
+    \item \textbf{When} pracownik wysyła odpowiedź
+    \item \textbf{Then} klient otrzymuje wiadomość w konwersacji
 \end{itemize}
 
 \section{Architektura logiczna projektu}
@@ -546,5 +1462,54 @@ Logika biznesowa \\
 \noindent Wszystkie komponenty klienckie komunikują się z tym samym backendem poprzez ustandaryzowane API, co zapewnia spójność danych i ułatwia przyszły rozwój systemu.
 
 
+\section{Diagramy aktywności}
+Poniżej przedstawiono pełen zestaw diagramów aktywności opisujących kluczowe procesy
+w systemie Delfinek: logowanie, komunikację (czat), powiadomienia, przeglądanie harmonogramu
+oraz zapisy na zajęcia. W repozytorium na githubie, do którego link podano na pierwszej stronie dokumentu, można pobrać załączone pliki png przedstawiające diagramy aktywności.
+
+
+% --- Logowanie ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{logowanie.png}
+  \caption{Logowanie i odzyskiwanie hasła}
+  \label{fig:logowanie}
+\end{figure}
+
+% --- Chat ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{chat.png}
+  \caption{Czat}
+  \label{fig:chat}
+\end{figure}
+
+% --- Powiadomienie ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{powiadomienie.png}
+  \caption{Powiadomienia}
+  \label{fig:powiadomienie}
+\end{figure}
+
+% --- Harmonogram ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{harmonogram.png}
+  \caption{Przeglądanie harmonogramu}
+  \label{fig:harmonogram}
+\end{figure}
+
+% --- Zapis na zajęcia ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{zapis.png}
+  \caption{Zapis na zajęcia}
+  \label{fig:zapis}
+\end{figure}
+
+\section{Prototyp UI}
+
+Utworzono lo-fi prototyp interfejsu użytkownika w programie Moqups. Link do pobrania pliku pdf tego interfejsu, można znaleźć na githubie, do którego link umieszczono na pierwszej stronie dokumentu.
 
 \end{document}
