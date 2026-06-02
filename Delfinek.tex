@@ -10,6 +10,10 @@
 \usepackage{graphicx}
 \geometry{margin=2.5cm}
 \usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+\usepackage{booktabs}
+\usepackage{array}
 
 
 % Dane dokumentu
@@ -1366,100 +1370,181 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 \end{itemize}
 
 \section{Architektura logiczna projektu}
-
-Projekt \textit{System Zarządzania Szkołą Pływania ,,Delfinek''} opiera się na architekturze klient–serwer, w której centralnym elementem jest serwer aplikacyjny komunikujący się z relacyjną bazą danych. Rozwiązanie przewiduje trzy odrębne interfejsy użytkownika: panel administracyjny (tekstowy), aplikację webową oraz aplikację mobilną, współdzielące wspólne zaplecze logiki biznesowej.
-
-\subsection{Warstwa serwerowa (backend)}
+ 
+Projekt \textit{System Zarządzania Szkołą Pływania ,,Delfinek''} oparty jest na trójwarstwowej architekturze klient--serwer. Centralnym elementem systemu jest serwer aplikacyjny zrealizowany w technologii \textbf{Java} z frameworkiem \textbf{Spring Boot}, komunikujący się z relacyjną bazą danych \textbf{PostgreSQL} za pośrednictwem warstwy persystencji \textbf{JPA/Hibernate}. Warstwa kliencka obejmuje aplikację webową dostępną z poziomu przeglądarki oraz dedykowany panel administratora zintegrowany w tej samej aplikacji.
+ 
+\subsection{Warstwy systemu}
+ 
+System podzielony jest na trzy logiczne warstwy, zgodnie z klasycznym wzorcem architektury wielowarstwowej:
+ 
+\begin{enumerate}
+    \item \textbf{Warstwa prezentacji (frontend)} -- interfejs użytkownika dostępny w przeglądarce internetowej, skierowany do wszystkich ról: klientów szkoły, instruktorów oraz administratora (pracownika biura). Komunikuje się z backendem wyłącznie poprzez REST API.
+    \item \textbf{Warstwa logiki biznesowej (backend)} -- serwer aplikacyjny Spring Boot realizujący całą logikę domenową systemu, udostępniający REST API w formacie JSON, obsługujący uwierzytelnianie i autoryzację opartą na rolach (RBAC).
+    \item \textbf{Warstwa danych (baza danych)} -- relacyjna baza danych PostgreSQL przechowująca wszystkie dane systemu; dostęp realizowany przez JPA/Hibernate.
+\end{enumerate}
+ 
+\subsection{Warstwa prezentacji (frontend)}
+ 
+Aplikacja webowa stanowi jedyny interfejs użytkownika w bieżącym zakresie projektu. Dostępna jest z poziomu dowolnej przeglądarki internetowej bez konieczności instalacji.
+ 
 \begin{itemize}
-    \item \textbf{Technologia wykonania:} język obiektowy \texttt{C++} lub \texttt{Java} (decyzja projektowa na etapie implementacji), zapewniający wysoką wydajność, skalowalność oraz łatwość utrzymania kodu.
-    \item \textbf{Rola:} realizacja logiki biznesowej systemu, obsługa żądań HTTP(S) pochodzących z aplikacji klienckich, autoryzacja i uwierzytelnianie użytkowników, zarządzanie harmonogramem zajęć, przydziałem instruktorów i torów basenowych.
-    \item \textbf{Komunikacja:} udostępnienie REST API (lub GraphQL) umożliwiającego wymianę danych w formacie JSON pomiędzy serwerem a interfejsami klienckimi.
-    \item \textbf{Bezpieczeństwo:} mechanizmy kontroli dostępu oparte na rolach (RBAC) – administrator, właściciel, instruktor, klient.
+    \item \textbf{Technologia:} HTML5, CSS3, JavaScript z frameworkiem (np. React lub Vue.js).
+    \item \textbf{Komunikacja z backendem:} żądania HTTP(S) do REST API, wymiana danych w formacie JSON.
+    \item \textbf{Widoki dostosowane do roli:} po zalogowaniu aplikacja prezentuje interfejs odpowiedni dla danej roli -- klienta, instruktora lub administratora.
+    \item \textbf{Funkcjonalności widoku klienta:} przeglądanie harmonogramu dostępnych zajęć, zapisywanie się i wypisywanie z zajęć, podgląd własnego grafiku, przeglądanie powiadomień, czat z instruktorem lub administratorem.
+    \item \textbf{Funkcjonalności widoku instruktora:} podgląd własnego harmonogramu, lista kursantów przypisanych do zajęć, podgląd danych kursanta (poziom zaawansowania), czat z klientami.
+    \item \textbf{Funkcjonalności widoku administratora:} zarządzanie harmonogramem (tworzenie, edycja, usuwanie zajęć), przydzielanie instruktorów i torów, zarządzanie rolami użytkowników, wysyłanie komunikatów i powiadomień, zarządzanie remontami torów.
 \end{itemize}
-
-\subsection{Warstwa bazy danych}
+ 
+\subsection{Warstwa logiki biznesowej (backend)}
+ 
+Backend realizowany jest jako aplikacja \textbf{Spring Boot} (Java), działająca jako samodzielny serwer HTTP(S). Architektura wewnętrzna backendu opiera się na wzorcu warstwowym: kontrolery REST $\rightarrow$ serwisy $\rightarrow$ repozytoria.
+ 
 \begin{itemize}
-    \item \textbf{Silnik:} relacyjna baza danych \texttt{SQL} (np. PostgreSQL, MySQL lub MariaDB).
+    \item \textbf{Technologia:} Java, Spring Boot, Spring Web MVC, Spring Security.
+    \item \textbf{REST API:} udostępnienie endpointów HTTP(S) z odpowiedziami w formacie JSON; wersjonowanie API (\texttt{/api/v1/...}).
+    \item \textbf{Uwierzytelnianie i autoryzacja:} mechanizm JWT (JSON Web Token) -- po zalogowaniu użytkownik otrzymuje token, który dołączany jest do każdego kolejnego żądania. Spring Security weryfikuje token i kontroluje dostęp na podstawie roli (RBAC): \texttt{KLIENT}, \texttt{INSTRUKTOR}, \texttt{ADMINISTRATOR}.
+    \item \textbf{Logika domenowa:} serwisy realizują kluczowe operacje systemu -- \texttt{HarmonogramSerwis}, \texttt{ZapisSerwis}, \texttt{UzytkownikSerwis}, \texttt{PowiadomienieSerwis}, \texttt{ChatSerwis}, \texttt{TorSerwis}, \texttt{MailSerwis}, \texttt{TokenSerwis}.
+    \item \textbf{Walidacja danych:} po stronie backendu z użyciem Bean Validation (adnotacje \texttt{@Valid}, \texttt{@NotNull} itd.).
+    \item \textbf{Powiadomienia e-mail:} wysyłka przez \texttt{JavaMailSender} (Spring Mail) -- potwierdzenia zapisów, alerty o zmianach harmonogramu, linki do resetu hasła.
+    \item \textbf{Obsługa błędów:} globalny handler wyjątków (\texttt{@ControllerAdvice}) zwracający ujednolicone odpowiedzi błędów w formacie JSON.
+\end{itemize}
+ 
+\subsection{Warstwa danych (baza danych)}
+ 
+\begin{itemize}
+    \item \textbf{Silnik:} \textbf{PostgreSQL} -- relacyjna baza danych obsługująca transakcje ACID, konieczne do zapewnienia spójności przy jednoczesnych operacjach (np. rywalizujące zapisy na ostatnie wolne miejsce w grupie).
+    \item \textbf{Dostęp z backendu:} \textbf{JPA/Hibernate} -- mapowanie obiektowo-relacyjne (ORM); repozytoria Spring Data JPA (\texttt{JpaRepository}) jako warstwa dostępu do danych.
+    \item \textbf{Migracje schematu:} zarządzane narzędziem Flyway lub Liquibase, zapewniającym kontrolę wersji schematu bazy.
     \item \textbf{Zakres przechowywanych danych:}
     \begin{itemize}
-        \item profile użytkowników (klienci, instruktorzy, administratorzy),
-        \item definicje kursów i pojedynczych lekcji pływania,
-        \item harmonogramy zajęć z przypisaniem instruktorów i torów,
-        \item zapisy kursantów na zajęcia oraz historię obecności,
-        \item dane konfiguracyjne systemu (m.in. dostępność basenu).
+        \item profile użytkowników (klienci, instruktorzy, administratorzy) wraz z hasłami w postaci skrótu (BCrypt),
+        \item definicje zajęć z przypisaniem instruktora, toru, typu i cykliczności,
+        \item harmonogramy zajęć i zapisy kursantów,
+        \item historia wiadomości czatu i konwersacji,
+        \item powiadomienia i ich status (przeczytane/nieprzeczytane),
+        \item dane torów basenowych wraz ze statusem (wolny, zajęty, remont).
     \end{itemize}
-    \item \textbf{Integralność:} wykorzystanie kluczy obcych, ograniczeń unikalności oraz transakcji dla zapewnienia spójności danych (np. przy jednoczesnych zapisach na ten sam tor).
+    \item \textbf{Integralność danych:} klucze obce, ograniczenia unikalności, transakcje -- zabezpieczenie przed podwójną rezerwacją toru lub instruktora w tym samym terminie.
 \end{itemize}
-
-\subsection{Panel administracyjny (tekstowy)}
+ 
+\subsection{Bezpieczeństwo}
+ 
 \begin{itemize}
-    \item \textbf{Forma:} interfejs tekstowy (CLI – Command Line Interface), dostępny bezpośrednio na serwerze lub poprzez bezpieczne połączenie SSH.
-    \item \textbf{Przeznaczenie:} narzędzie dla administratora technicznego szkoły pływania.
-    \item \textbf{Funkcjonalność:} zarządzanie konfiguracją serwera, monitorowanie wydajności, przegląd logów systemowych, zarządzanie kontami użytkowników z uprawnieniami administracyjnymi oraz ręczna interwencja w przypadku sytuacji wyjątkowych (np. przywracanie danych z kopii zapasowej).
-    \item \textbf{Zalety:} niski narzut zasobów, niezależność od środowiska graficznego, szybkość wykonywania poleceń wsadowych.
+    \item \textbf{Transport:} komunikacja wyłącznie przez HTTPS (TLS).
+    \item \textbf{Uwierzytelnianie:} JWT z określonym czasem ważności tokenu; mechanizm odświeżania tokenu (refresh token).
+    \item \textbf{Autoryzacja:} Spring Security + RBAC -- każdy endpoint chroniony odpowiednią rolą; użytkownik nie uzyska dostępu do zasobów innej roli.
+    \item \textbf{Hasła:} przechowywane wyłącznie jako skróty BCrypt; proces resetowania hasła oparty na jednorazowym tokenie z czasem ważności 15 minut, wysyłanym na adres e-mail.
+    \item \textbf{Walidacja wejścia:} dane wejściowe walidowane po stronie backendu niezależnie od frontendu.
 \end{itemize}
-
-\subsection{Aplikacja webowa}
-\begin{itemize}
-    \item \textbf{Odbiorcy:} klienci szkoły (zapisani kursanci) oraz właściciel szkoły.
-    \item \textbf{Wersja dla klienta:}
-    \begin{itemize}
-        \item przeglądanie oferty kursów i dostępnych terminów,
-        \item samodzielne zapisywanie się na zajęcia oraz rezygnacja z nich,
-        \item dostęp do indywidualnego grafiku i historii zajęć,
-        \item otrzymywanie powiadomień o zmianach w harmonogramie (np. poprzez wiadomości wewnątrz aplikacji).
-    \end{itemize}
-    \item \textbf{Wersja dla administratora:}
-    \begin{itemize}
-        \item zarządzanie kadrą instruktorską i przydziałem torów,
-        \item modyfikacja grafiku zajęć (także awaryjne zmiany),
-        \item generowanie raportów dotyczących rentowności i obłożenia kursów.
-    \end{itemize}
-    \item \textbf{Technologie:} przeglądarkowy interfejs użytkownika zbudowany w oparciu o HTML5, CSS3 oraz JavaScript (framework np. React, Vue.js), komunikujący się z backendem poprzez API.
-\end{itemize}
-
+ 
 \subsection{Aplikacja mobilna}
-\begin{itemize}
-    \item \textbf{Przeznaczenie:} wygodny dostęp do systemu z urządzeń przenośnych (smartfony, tablety).
-    \item \textbf{Funkcjonalność (wariant podstawowy):} tożsama z wersją kliencką aplikacji webowej, z naciskiem na przejrzysty podgląd grafiku oraz szybkie powiadomienia \textit{push} o zmianach w harmonogramie.
-    \item \textbf{Dodatkowe cechy:} możliwość pracy w trybie offline (podgląd zapisanego lokalnie harmonogramu) oraz synchronizacja po przywróceniu połączenia.
-    \item \textbf{Implementacja:} aplikacja natywna (Kotlin/Java dla Androida, Swift dla iOS) lub rozwiązanie hybrydowe (np. Flutter, React Native) współdzielące logikę komunikacji z tym samym backendowym API.
-\end{itemize}
+ 
+Aplikacja mobilna nie jest objęta bieżącym zakresem projektu. Ze względu na architekturę opartą na REST API, wdrożenie dedykowanej aplikacji mobilnej (np. w technologii Flutter lub React Native) jest możliwe w przyszłości bez zmian po stronie backendu -- wystarczy podłączenie nowego klienta do istniejącego API.
+ 
+\subsection{Schemat architektury}
+ 
+Poniższy schemat przedstawia warstwową architekturę systemu oraz przepływ komunikacji między komponentami.
+ 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    box/.style={
+        draw, rounded corners=4pt,
+        minimum width=3.8cm, minimum height=0.9cm,
+        align=center, fill=white
+    },
+    layerbox/.style={
+        draw, rounded corners=6pt,
+        inner sep=10pt,
+        fill=#1!8, draw=#1!60
+    },
+    arrow/.style={-Stealth, thick, draw=gray!70},
+    label/.style={font=\footnotesize\itshape, text=gray!80}
+]
+ 
 
-\subsection{Struktura komunikacji}
-Poniższy uproszczony schemat przedstawia warstwową architekturę systemu:
+\node[box, fill=blue!10, draw=blue!50]  (web)   at (0, 0)
+    {\textbf{Przeglądarka}\\\footnotesize HTML5 / CSS3 / JS\\(React / Vue.js)};
+ 
 
-\begin{center}
-\begin{tabular}{|c|}
-\hline
-\textbf{Aplikacja mobilna} \\
-(Android/iOS) \\
-\hline
-\textbf{Aplikacja webowa} \\
-(przeglądarka) \\
-\hline
-\textbf{Panel administracyjny (CLI)} \\
-(SSH / konsola serwera) \\
-\hline
-\end{tabular}
-\quad $\longleftrightarrow$ \quad
-\begin{tabular}{|c|}
-\hline
-\textbf{Backend} (C++/Java) \\
-REST API / JSON \\
-Logika biznesowa \\
-\hline
-\end{tabular}
-\quad $\longleftrightarrow$ \quad
-\begin{tabular}{|c|}
-\hline
-\textbf{Baza danych SQL} \\
-(PostgreSQL / MySQL) \\
-\hline
-\end{tabular}
-\end{center}
+\node[label] at (3.5, 0.35) {HTTPS};
+\node[label] at (3.5,-0.35) {REST / JSON};
+\draw[arrow, <->] (web.east) -- ++(2.5,0) node[midway] {};
+ 
 
-\noindent Wszystkie komponenty klienckie komunikują się z tym samym backendem poprzez ustandaryzowane API, co zapewnia spójność danych i ułatwia przyszły rozwój systemu.
+\node[box, fill=green!10, draw=green!50, minimum width=4.2cm, minimum height=5.2cm]
+    (backend) at (6.3, 0) {};
+ 
+\node[font=\bfseries\small, above] at (backend.north) {Backend};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (ctrl)  at (6.3,  1.6) {\textbf{Kontrolery REST}\\\footnotesize Spring Web MVC};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (sec)   at (6.3,  0.4) {\textbf{Bezpieczeństwo}\\\footnotesize Spring Security + JWT};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (srv)   at (6.3, -0.8) {\textbf{Serwisy}\\\footnotesize logika biznesowa};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (repo)  at (6.3, -2.0) {\textbf{Repozytoria}\\\footnotesize Spring Data JPA};
+ 
+\draw[arrow] (ctrl) -- (sec);
+\draw[arrow] (sec)  -- (srv);
+\draw[arrow] (srv)  -- (repo);
+ 
+
+\node[label] at (9.9,  0.35) {JPA /};
+\node[label] at (9.9, -0.35) {Hibernate};
+\draw[arrow, <->] (backend.east) -- ++(2.0,0);
+ 
+
+\node[box, fill=orange!10, draw=orange!50, minimum width=3.4cm, minimum height=2.0cm]
+    (db) at (13.2, 0)
+    {\textbf{PostgreSQL}\\\footnotesize relacyjna\\baza danych};
+ 
+
+\node[box, fill=purple!10, draw=purple!40, minimum width=3.0cm]
+    (mail) at (6.3, -3.6)
+    {\textbf{Serwer SMTP}\\\footnotesize JavaMailSender\\(powiadomienia e-mail)};
+ 
+\draw[arrow] (srv.south) -- ++(0,-0.55) -| (mail.north);
+ 
+\node[label, rotate=90] at (-2.2, 0)    {Warstwa prezentacji};
+\node[label, rotate=90] at (4.0,  0)    {Warstwa logiki biznesowej};
+\node[label, rotate=90] at (11.6, 0)    {Warstwa danych};
+ 
+\end{tikzpicture}
+\caption{Schemat architektury systemu Delfinek}
+\label{fig:architektura}
+\end{figure}
+ 
+\noindent Wszystkie żądania użytkowników trafiają do kontrolerów REST, gdzie Spring Security weryfikuje token JWT i rolę użytkownika. Po pozytywnej autoryzacji żądanie przekazywane jest do odpowiedniego serwisu, który realizuje logikę biznesową i za pośrednictwem repozytoriów JPA odczytuje lub zapisuje dane w PostgreSQL. Odpowiedź wraca tą samą ścieżką w formacie JSON. Zdarzenia wymagające powiadomień e-mail (potwierdzenia zapisów, alerty o zmianach, reset hasła) obsługiwane są asynchronicznie przez \texttt{MailSerwis} z użyciem \texttt{JavaMailSender}.
+ 
+\subsection{Stos technologiczny -- podsumowanie}
+ 
+\begin{table}[H]
+\centering
+\begin{tabular}{>{\bfseries}p{3.8cm} p{4.5cm} p{5.5cm}}
+\toprule
+Obszar & Technologia & Rola w systemie \\
+\midrule
+Język backendowy   & Java (JDK 25)         & Implementacja logiki biznesowej \\
+Framework backend  & Spring Boot            & Serwer HTTP, IoC, konfiguracja \\
+REST API           & Spring Web MVC         & Endpointy HTTP, serializacja JSON \\
+Bezpieczeństwo     & Spring Security + JWT  & Uwierzytelnianie, autoryzacja RBAC \\
+ORM                & JPA / Hibernate        & Mapowanie obiektowo-relacyjne \\
+Baza danych        & PostgreSQL             & Persystencja danych, transakcje ACID \\
+Migracje schematu  & Flyway / Liquibase     & Wersjonowanie schematu bazy \\
+E-mail             & Spring Mail (SMTP)     & Powiadomienia, reset hasła \\
+Frontend           & HTML5/CSS3/JS          & Interfejs użytkownika w przeglądarce \\
+\bottomrule
+\end{tabular}
+\caption{Stos technologiczny systemu Delfinek}
+\label{tab:stack}
+\end{table}
 
 
 \section{Diagramy aktywności}
@@ -1511,5 +1596,9 @@ oraz zapisy na zajęcia. W repozytorium na githubie, do którego link podano na 
 \section{Prototyp UI}
 
 Utworzono lo-fi prototyp interfejsu użytkownika w programie Moqups. Link do pobrania pliku pdf tego interfejsu, można znaleźć na githubie, do którego link umieszczono na pierwszej stronie dokumentu.
+
+\section{Diagramy klas i sekwencji}
+
+Sporządzono diagram klas dla architektury, a także odpowiednie diagramy sekwencji dla implementowanych w przyszłości funkcjonalności. Ze względu na ich nieczytelnośc, nie umieszczono ich w tym dokumencie, pliki .puml oraz .png z diagramami są załączane w repozytorium githubowym.
 
 \end{document}
