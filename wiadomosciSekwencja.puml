@@ -1,0 +1,49 @@
+@startuml Delfinek_Sekwencja_ChatWiadomosc
+title Diagram sekwencji – Wysłanie wiadomości czatu (klient → instruktor)
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Klient as K
+participant "Aplikacja\nwebowa" as UI
+participant "ChatController\n(WebSocket/REST)" as CTRL
+participant "ChatSerwis" as CS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych" as DB
+actor Instruktor as I
+
+K -> UI : Otwiera czat,\nwybiera instruktora,\nwpisuje wiadomość i klika "Wyślij"
+activate UI
+
+UI -> CTRL : POST /api/chat/wiadomosci\n{nadawcaId, odbiorcaId, tresc}
+activate CTRL
+
+CTRL -> CS : wyslijWiadomosc(nadawcaId, odbiorcaId, tresc)
+activate CS
+
+CS -> CS : pobierzLubUtworzKonwersacje(\n  nadawcaId, odbiorcaId)
+
+CS -> DB : INSERT INTO wiadomosci\n(konwersacjaId, nadawcaId, tresc, dataCzas)
+DB --> CS : Wiadomosc
+
+CS -> PS : wyslij(NOWA_WIADOMOSC, [instruktor], ...)
+activate PS
+PS -> DB : INSERT INTO powiadomienia
+DB --> PS : ok
+deactivate PS
+
+CS --> CTRL : Wiadomosc
+deactivate CS
+
+CTRL --> UI : HTTP 201 Created {wiadomoscId, dataCzas}
+UI --> K : Wiadomość pojawia się\nw oknie czatu
+
+note right of I : Instruktor w czasie rzeczywistym\n(WebSocket push) lub\nprzy otwarciu czatu
+
+CTRL -> I : WebSocket push: nowa wiadomość
+deactivate CTRL
+deactivate UI
+
+@enduml

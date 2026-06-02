@@ -1,0 +1,47 @@
+@startuml Delfinek_Sekwencja_AnulowanieZapisu
+title Diagram sekwencji – Anulowanie zapisu przez klienta
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Klient as K
+participant "Aplikacja\nwebowa" as UI
+participant "ZapisController" as CTRL
+participant "ZapisSerwis" as ZS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych" as DB
+
+K -> UI : Klika "Anuluj zajęcia"\ni potwierdza w dialogu\n("Czy anulować cyklicznie?")
+activate UI
+
+UI -> CTRL : DELETE /api/zapisy/{zapisId}\n?cyklicznie=false
+activate CTRL
+
+CTRL -> ZS : anuluj(zapisId, cyklicznie)
+activate ZS
+
+ZS -> DB : SELECT zapis WHERE id = zapisId
+DB --> ZS : Zapis (status=AKTYWNY)
+
+ZS -> DB : UPDATE zapisy SET status=ANULOWANY\nWHERE id = zapisId
+DB --> ZS : ok
+
+note right of ZS : Liczba wolnych miejsc jest liczona\ndynamicznie przez getLiczbaMiejscWolnych()\nna podstawie aktywnych zapisów –\nnie wymaga osobnej aktualizacji kolumny
+
+ZS -> PS : wyslij(ANULOWANIE_ZAPISU, [klient], ...)
+activate PS
+PS -> DB : INSERT INTO powiadomienia
+DB --> PS : ok
+deactivate PS
+
+ZS --> CTRL : void
+deactivate ZS
+
+CTRL --> UI : HTTP 204 No Content
+UI --> K : "Zapis anulowany. Miejsce\nzostało zwolnione."
+deactivate CTRL
+deactivate UI
+
+@enduml

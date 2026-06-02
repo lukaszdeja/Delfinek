@@ -1,0 +1,50 @@
+@startuml Delfinek_Sekwencja_WyslanieKomunikatu
+title Diagram sekwencji – Administrator wysyła komunikat do użytkowników
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI
+participant "PowiadomienieController" as CTRL
+participant "PowiadomienieSerwis" as PS
+participant "MailSerwis" as MAIL
+database "Baza danych" as DB
+
+A -> UI : Klika "Wyślij komunikat",\nwpisuje treść, wybiera\nodbiorcow (klienci / instruktorzy /\nwszyscy), klika "Wyślij"
+activate UI
+
+UI -> CTRL : POST /api/powiadomienia/komunikat\n{tresc, grupOdbiorcow}
+activate CTRL
+
+CTRL -> PS : wyslijKomunikat(tresc, grupaOdbiorcow)
+activate PS
+
+alt tresc jest pusta
+    PS --> CTRL : ValidationException
+    CTRL --> UI : HTTP 422
+    UI --> A : "Treść komunikatu nie może być pusta"
+else tresc niepusta
+    PS -> DB : SELECT uzytkownicy\nWHERE rola IN (grupaOdbiorcow)
+    DB --> PS : List<Uzytkownik>
+
+    PS -> DB : INSERT INTO powiadomienia\n(masowe, typ=KOMUNIKAT_OGOLNY)
+    DB --> PS : ok
+
+    PS -> MAIL : wyslijEmailMasowy(\n  adresy[], tresc)
+    note right : Asynchronicznie, max 5 min
+    MAIL --> PS : ok (zakolejkowane)
+
+    PS --> CTRL : {wyslanoPowiadomien: N}
+    deactivate PS
+
+    CTRL --> UI : HTTP 200 OK\n{wyslanoPowiadomien: N}
+    UI --> A : "Komunikat wysłany do N użytkowników"
+end
+
+deactivate CTRL
+deactivate UI
+
+@enduml

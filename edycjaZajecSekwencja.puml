@@ -1,0 +1,66 @@
+@startuml Delfinek_Sekwencja_EdycjaHarmonogramu
+title Diagram sekwencji – Administrator edytuje zajęcia i powiadamia użytkowników
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI
+participant "HarmonogramController" as CTRL
+participant "HarmonogramSerwis" as HS
+participant "ZapisSerwis" as ZS
+participant "PowiadomienieSerwis" as PS
+participant "MailSerwis" as MAIL
+database "Baza danych" as DB
+
+A -> UI : Wybiera zajęcia, klika\n"Edytuj", modyfikuje dane
+activate UI
+
+UI -> CTRL : PUT /api/zajecia/{zajeciaId}\n{ZajeciaDTO}
+activate CTRL
+
+CTRL -> HS : edytujZajecia(id, dto)
+activate HS
+
+HS -> HS : sprawdzKonflikt(dto)
+note right : Tak samo jak przy dodawaniu\n– sprawdzany tor i instruktor
+
+alt konflikt
+    HS --> CTRL : ConflictException
+    CTRL --> UI : HTTP 409
+    UI --> A : "Konflikt terminu"
+else brak konfliktu
+    HS -> DB : UPDATE zajecia SET ...\nWHERE id = zajeciaId
+    DB --> HS : Zajecia (zaktualizowane)
+
+    HS -> ZS : pobierzKursantow(zajeciaId)
+    activate ZS
+    ZS -> DB : SELECT klienci WHERE zajeciaId = ?
+    DB --> ZS : List<Klient>
+    ZS --> HS : List<Klient>
+    deactivate ZS
+
+    HS -> PS : powiadomOZmianieHarmonogramu(\n  zajecia, instruktor + klienci)
+    activate PS
+
+    loop dla każdego odbiorcy (instruktor + klienci)
+        PS -> DB : INSERT INTO powiadomienia\n(typ=ZMIANA_HARMONOGRAMU)
+        DB --> PS : ok
+        PS -> MAIL : wyslijEmail(odbiorca.email, ...)
+        note right : Asynchronicznie;\nmax 5 min
+    end
+
+    deactivate PS
+    HS --> CTRL : Zajecia
+    deactivate HS
+
+    CTRL --> UI : HTTP 200 OK {zajecia}
+    UI --> A : "Zmiany zapisane.\nUżytkownicy zostali powiadomieni."
+end
+
+deactivate CTRL
+deactivate UI
+
+@enduml

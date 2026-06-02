@@ -1,0 +1,71 @@
+@startuml Delfinek_Sekwencja_DodanieZajec
+title Diagram sekwencji – Administrator dodaje nowe zajęcia do harmonogramu
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+skinparam noteBackgroundColor #E1F5EE
+skinparam noteBorderColor #0F6E56
+
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI
+participant "HarmonogramController" as CTRL
+participant "HarmonogramSerwis" as HS
+participant "TorSerwis" as TS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych" as DB
+
+A -> UI : Wypełnia formularz\n"Nowe zajęcia"\n(data, godzina, typ,\ninstruktor, tor,\ncykliczność, max. miejsc)
+activate UI
+
+UI -> CTRL : POST /api/zajecia\n{ZajeciaDTO}
+activate CTRL
+
+CTRL -> HS : dodajZajecia(dto)
+activate HS
+
+HS -> HS : walidujDTO(dto)
+alt dto niepoprawne (brak wymaganych pól)
+    HS --> CTRL : ValidationException
+    CTRL --> UI : HTTP 422 Unprocessable Entity\n{"errors": [...]}
+    UI --> A : Komunikaty walidacyjne\nna formularzu
+else dto poprawne
+
+    HS -> TS : sprawdzDostepnosc(torId, dataGodzina)
+    activate TS
+    TS -> DB : SELECT zajecia WHERE\ntorId = ? AND dataGodzina overlaps ?
+    DB --> TS : lista konfliktów
+    TS --> HS : isWolny: Boolean
+    deactivate TS
+
+    HS -> DB : SELECT zajecia WHERE\ninstruktorId = ? AND dataGodzina overlaps ?
+    DB --> HS : lista konfliktów instruktora
+
+    alt konflikt toru lub instruktora
+        HS --> CTRL : ConflictException("Konflikt: tor/instruktor zajęty")
+        CTRL --> UI : HTTP 409 Conflict\n{"error": "Konflikt terminu"}
+        UI --> A : "Wybrany tor lub instruktor\njest zajęty w tym terminie"
+    else brak konfliktu
+
+        HS -> DB : INSERT INTO zajecia (generuje\nwszystkie terminy dla cykliczności)
+        DB --> HS : List<Zajecia>
+
+        HS -> PS : powiadomONowychZajeciach(zajecia, instruktor)
+        activate PS
+        PS -> DB : INSERT INTO powiadomienia\n(typ=NOWE_ZAJECIA, odbiorca=instruktor)
+        DB --> PS : ok
+        deactivate PS
+
+        HS --> CTRL : List<Zajecia>
+        deactivate HS
+
+        CTRL --> UI : HTTP 201 Created\n{zajeciaIds, terminy, pominieteDniSwiateczne}
+        UI --> A : "Zajęcia dodane.\nTerminy: ...\nPominięto dni świąteczne: ..."
+    end
+end
+
+deactivate CTRL
+deactivate UI
+
+@enduml

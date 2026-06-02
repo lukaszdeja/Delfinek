@@ -1,0 +1,39 @@
+@startuml Delfinek_Sekwencja_ZmianRoli
+title Diagram sekwencji – Administrator zmienia rolę użytkownika
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI
+participant "UzytkownikController" as CTRL
+participant "UzytkownikSerwis" as US
+database "Baza danych" as DB
+
+A -> UI : Przechodzi do "Role użytkowników",\nwybiera użytkownika, wybiera rolę\n(np. Instruktor), klika "Zapisz"
+activate UI
+
+UI -> CTRL : PUT /api/uzytkownicy/{id}/rola\n{rola: "INSTRUKTOR"}
+activate CTRL
+
+CTRL -> US : zmienRole(id, rola)
+activate US
+
+US -> DB : SELECT uzytkownik WHERE id = ?
+DB --> US : Uzytkownik
+
+US -> DB : UPDATE uzytkownik SET rola = 'INSTRUKTOR'\nWHERE id = ?
+DB --> US : ok
+
+US --> CTRL : Uzytkownik (zaktualizowany)
+deactivate US
+
+CTRL --> UI : HTTP 200 OK {uzytkownik}
+UI --> A : "Rola zmieniona.\nNastępne logowanie użytkownika\nbędzie z nowymi uprawnieniami."
+
+deactivate CTRL
+deactivate UI
+
+@enduml

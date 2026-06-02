@@ -1,0 +1,298 @@
+@startuml Delfinek_DiagramKlas
+title Diagram klas – System Zarządzania Szkołą Pływania "Delfinek"
+
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classHeaderBackgroundColor #AFA9EC
+skinparam classBorderColor #534AB7
+skinparam arrowColor #534AB7
+skinparam packageBackgroundColor #EEEDFE
+skinparam packageBorderColor #534AB7
+skinparam ranksep 60
+skinparam nodesep 40
+skinparam padding 5
+skinparam wrapWidth 250
+
+left to right direction
+
+
+package "Użytkownicy" as P1 {
+
+    abstract class Uzytkownik {
+        - id : Long
+        - imie : String
+        - nazwisko : String
+        - email : String
+        - haslo : String
+        - nrTelefonu : String
+        - dataUrodzenia : Date
+        - zdjecie : byte[]
+        - dataRejestracji : DateTime
+        + zalogujSie(email: String, haslo: String) : Boolean
+        + wylogujSie() : void
+        + zmienHaslo(stare: String, nowe: String) : void
+        + resetujHaslo(email: String) : void
+        + edytujProfil() : void
+        + pobierzPowiadomienia() : List<Powiadomienie>
+    }
+
+    class Klient {
+        - poziomPlywania : PoziomPlywania
+        - notatkaInstruktora : String
+        + zapiszSieNaZajecia(zajecia: Zajecia) : void
+        + anulujZapis(zapis: Zapis) : void
+        + przegladajHarmonogram() : List<Zapis>
+        + zobaczSzczegolyZajec(zajecia: Zajecia) : Zajecia
+    }
+
+    class Instruktor {
+        - opis : String
+        + zobaczMojHarmonogram() : List<Zajecia>
+        + pobierzListeKursantow(zajecia: Zajecia) : List<Klient>
+        + zobaczDaneKursanta(klient: Klient) : Klient
+        + edytujNotatkeKursanta(klient: Klient, notatka: String) : void
+        + zasugerujUsunieciZajec(zajecia: Zajecia, powod: String) : void
+    }
+
+    class Administrator {
+        + dodajZajecia(zajecia: Zajecia) : void
+        + edytujZajecia(zajecia: Zajecia) : void
+        + usunZajecia(zajecia: Zajecia) : void
+        + przydzielInstruktora(zajecia: Zajecia, instr: Instruktor) : void
+        + przydzielTor(zajecia: Zajecia, tor: Tor) : void
+        + zmienRoleUzytkownika(u: Uzytkownik, rola: Rola) : void
+        + wyslijKomunikat(tresc: String, odbiorcy: List<Uzytkownik>) : void
+        + zglosRemont(tor: Tor, od: Date, do: Date) : void
+        + zakonczRemont(tor: Tor) : void
+    }
+
+    enum Rola {
+        KLIENT
+        INSTRUKTOR
+        ADMINISTRATOR
+    }
+
+    enum PoziomPlywania {
+        POCZATKUJACY
+        SREDNI
+        ZAAWANSOWANY
+        PRO
+    }
+
+    Uzytkownik <|-- Klient
+    Uzytkownik <|-- Instruktor
+    Uzytkownik <|-- Administrator
+    Uzytkownik "1" --> "1" Rola : ma >
+    Klient --> PoziomPlywania : ma >
+}
+
+
+package "Harmonogram" as P2 {
+
+    class Zajecia {
+        - id : Long
+        - dataGodzina : DateTime
+        - czasTrwaniaMin : int
+        - typZajec : TypZajec
+        - maxLiczbaMiejsc : int
+        - uwagi : String
+        - cyklicznosc : Cyklicznosc
+        - dataKonca : Date
+        + getLiczbaMiejscWolnych() : int
+        + isPelne() : Boolean
+        + dodajKursanta(klient: Klient) : void
+        + usunKursanta(klient: Klient) : void
+        + getListaUczestnikow() : List<Klient>
+    }
+
+    class Zapis {
+        - id : Long
+        - dataZapisu : DateTime
+        - status : StatusZapisu
+        + anuluj() : void
+    }
+
+    enum TypZajec {
+        DZIECI_GR_A
+        DZIECI_GR_B
+        DZIECI_GR_C
+        DOROSLI_PODSTAWOWY
+        DOROSLI_SREDNI
+        DOROSLI_ZAAWANSOWANY
+        DOROSLI_PRO
+    }
+
+    enum Cyklicznosc {
+        JEDNORAZOWE
+        CO_TYDZIEN
+        CO_DWA_TYGODNIE
+    }
+
+    enum StatusZapisu {
+        AKTYWNY
+        ANULOWANY
+    }
+
+    Zajecia --> TypZajec
+    Zajecia --> Cyklicznosc
+    Zapis "0..*" --> "1" Klient : dotyczy >
+    Zapis "0..*" --> "1" Zajecia : dotyczy >
+    Zapis --> StatusZapisu
+}
+
+
+package "Basen" as P3 {
+
+    class Tor {
+        - id : Long
+        - numer : int
+        - dlugoscM : int
+        - glebokoscM : double
+        - status : StatusToru
+        - uwagi : String
+        + isWolny(od: DateTime, do: DateTime) : Boolean
+        + zglosRemont(od: Date, do: Date) : void
+        + zakonczRemont() : void
+    }
+
+    enum StatusToru {
+        WOLNY
+        ZAJETY
+        REMONT
+    }
+
+    Tor --> StatusToru
+}
+
+
+package "Komunikacja" as P4 {
+
+    class Wiadomosc {
+        - id : Long
+        - tresc : String
+        - dataCzas : DateTime
+        - przeczytana : Boolean
+        + oznaczJakoPrzeczytana() : void
+    }
+
+    class Konwersacja {
+        - id : Long
+        - dataUtworzenia : DateTime
+        + getWiadomosci() : List<Wiadomosc>
+        + wyslijWiadomosc(nadawca: Uzytkownik, tresc: String) : Wiadomosc
+    }
+
+    class Powiadomienie {
+        - id : Long
+        - tytul : String
+        - tresc : String
+        - typ : TypPowiadomienia
+        - dataCzas : DateTime
+        - przeczytane : Boolean
+        + oznaczJakoPrzeczytane() : void
+    }
+
+    enum TypPowiadomienia {
+        ZMIANA_HARMONOGRAMU
+        NOWE_ZAJECIA
+        ANULOWANIE_ZAJEC
+        NOWY_KURSANT
+        NOWA_WIADOMOSC
+        KOMUNIKAT_OGOLNY
+        POTWIERDZENIE_ZAPISU
+        ANULOWANIE_ZAPISU
+        REMONT_OBIEKTU
+    }
+
+    Konwersacja "1" *-- "0..*" Wiadomosc : zawiera >
+    Konwersacja "0..*" --> "2" Uzytkownik : uczestniczy >
+    Wiadomosc "0..*" --> "1" Uzytkownik : nadawca >
+    Powiadomienie "0..*" --> "1" Uzytkownik : odbiorca >
+    Powiadomienie --> TypPowiadomienia
+}
+
+
+package "Serwisy" as P5 {
+
+    class HarmonogramSerwis {
+        + dodajZajecia(dto: ZajeciaDTO) : Zajecia
+        + edytujZajecia(id: Long, dto: ZajeciaDTO) : Zajecia
+        + usunZajecia(id: Long, cyklicznie: Boolean) : void
+        + pobierzHarmonogram(od: Date, do: Date) : List<Zajecia>
+        + sprawdzKonflikt(dto: ZajeciaDTO) : Boolean
+        + przydzielInstruktora(idZajec: Long, idInstr: Long) : void
+        + przydzielTor(idZajec: Long, idToru: Long) : void
+    }
+
+    class ZapisSerwis {
+        + zapisz(idKlienta: Long, idZajec: Long) : Zapis
+        + anuluj(idZapisu: Long) : void
+        + pobierzZapisyKlienta(idKlienta: Long) : List<Zapis>
+        + pobierzKursantow(idZajec: Long) : List<Klient>
+    }
+
+    class UzytkownikSerwis {
+        + rejestruj(dto: RegistrationDTO) : Klient
+        + znajdzPoId(id: Long) : Uzytkownik
+        + zmienRole(id: Long, rola: Rola) : void
+        + resetujHaslo(email: String) : void
+        + zmienHasloPoReset(email: String, kod: String, noweHaslo: String) : void
+    }
+
+    class PowiadomienieSerwis {
+        + wyslij(typ: TypPowiadomienia, odbiorcy: List<Uzytkownik>, tresc: String) : void
+        + powiadomOZmianieHarmonogramu(zajecia: Zajecia) : void
+        + powiadomONowymZapisie(zapis: Zapis) : void
+        + powiadomONowymKursancie(zajecia: Zajecia, klient: Klient) : void
+    }
+
+    class ChatSerwis {
+        + pobierzLubUtworzKonwersacje(u1: Long, u2: Long) : Konwersacja
+        + wyslijWiadomosc(konwId: Long, nadawcaId: Long, tresc: String) : Wiadomosc
+        + pobierzHistorie(konwId: Long) : List<Wiadomosc>
+    }
+
+    class TorSerwis {
+        + pobierzTory() : List<Tor>
+        + sprawdzDostepnosc(idToru: Long, od: DateTime, do: DateTime) : Boolean
+        + zglosRemont(idToru: Long, od: Date, do: Date) : void
+        + zakonczRemont(idToru: Long) : void
+    }
+
+    class MailSerwis {
+        + wyslijEmail(adresat: String, temat: String, tresc: String) : void
+        + wyslijEmailMasowy(adresy: List<String>, temat: String, tresc: String) : void
+    }
+
+    class TokenSerwis {
+        + wygenerujToken(userId: Long, rola: Rola) : String
+        + weryfikujToken(token: String) : Boolean
+        + pobierzIdUzytkownika(token: String) : Long
+    }
+}
+
+Zajecia "0..*" --> "0..1" Instruktor : prowadzony przez >
+Zajecia "0..*" --> "0..1" Tor : odbywaja sie na >
+
+HarmonogramSerwis ..> Zajecia : uses
+HarmonogramSerwis ..> Tor    : uses
+HarmonogramSerwis ..> Instruktor : uses
+
+ZapisSerwis ..> Zapis   : uses
+ZapisSerwis ..> Klient  : uses
+ZapisSerwis ..> Zajecia : uses
+
+UzytkownikSerwis ..> Uzytkownik : uses
+UzytkownikSerwis ..> Klient     : uses
+
+PowiadomienieSerwis ..> Powiadomienie : uses
+PowiadomienieSerwis ..> Uzytkownik    : uses
+
+ChatSerwis ..> Konwersacja : uses
+ChatSerwis ..> Wiadomosc   : uses
+
+TorSerwis ..> Tor : uses
+
+TokenSerwis ..> Rola : uses
+
+@enduml

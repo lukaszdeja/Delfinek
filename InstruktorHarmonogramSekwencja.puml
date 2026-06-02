@@ -1,0 +1,89 @@
+@startuml Delfinek_Sekwencja_InstruktorHarmonogram
+
+title Diagram sekwencji – Przeglądanie harmonogramu i listy kursantów przez instruktora
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+skinparam noteBackgroundColor #E1F5EE
+skinparam noteBorderColor #0F6E56
+
+actor Instruktor as I
+participant "Aplikacja\nwebowa" as UI
+participant "HarmonogramController\n(REST API)" as CTRL
+participant "HarmonogramSerwis" as HS
+participant "ZapisSerwis" as ZS
+database "Baza danych\n(SQL)" as DB
+
+I -> UI : Otwiera zakładkę\n"Mój grafik"
+activate UI
+
+UI -> CTRL : GET /api/harmonogram/moj
+activate CTRL
+
+CTRL -> HS : pobierzHarmonogram(instruktorId,\nodDate, doDate)
+activate HS
+
+HS -> DB : SELECT zajecia\nWHERE instruktorId = :id\nAND dataGodzina BETWEEN :od AND :do
+DB --> HS : List<Zajecia>
+
+HS --> CTRL : List<Zajecia>
+deactivate HS
+
+CTRL --> UI : HTTP 200 OK\n{zajecia: [...]}
+UI --> I : Wyświetla harmonogram\ntygodniowy
+
+I -> UI : Klika w konkretne zajęcia
+UI -> CTRL : GET /api/zajecia/{zajeciaId}/kursanci
+activate CTRL
+
+CTRL -> ZS : pobierzKursantow(zajeciaId)
+activate ZS
+
+ZS -> DB : SELECT k.*, z.status\nFROM zapisy z\nJOIN klienci k ON z.klientId = k.id\nWHERE z.zajeciaId = :id\nAND z.status = AKTYWNY
+DB --> ZS : List<Klient>
+
+ZS --> CTRL : List<Klient>
+deactivate ZS
+
+CTRL --> UI : HTTP 200 OK\n{kursanci: [...]}
+deactivate CTRL
+
+UI --> I : Wyświetla listę kursantów\n(imię, poziom, notatki)
+
+I -> UI : Klika w konkretnego kursanta
+UI -> CTRL : GET /api/klienci/{klientId}
+activate CTRL
+
+CTRL -> ZS : pobierzKursantow(zajeciaId)
+activate ZS
+ZS -> DB : SELECT * FROM klienci\nWHERE id = :klientId
+DB --> ZS : Klient
+ZS --> CTRL : Klient
+deactivate ZS
+
+CTRL --> UI : HTTP 200 OK\n{klient: {poziomPlywania,\nnotatkaInstruktora, ...}}
+deactivate CTRL
+
+UI --> I : Wyświetla szczegóły kursanta\n(poziom, notatka instruktora)
+
+I -> UI : Edytuje notatkę kursanta\ni klika "Zapisz"
+UI -> CTRL : PUT /api/klienci/{klientId}/notatka\n{notatka: "..."}
+activate CTRL
+
+CTRL -> HS : edytujNotatkeKursanta(klientId, notatka)
+activate HS
+HS -> DB : UPDATE klienci\nSET notatkaInstruktora = :notatka\nWHERE id = :klientId
+DB --> HS : ok
+HS --> CTRL : void
+deactivate HS
+
+CTRL --> UI : HTTP 200 OK
+deactivate CTRL
+deactivate CTRL
+
+UI --> I : Komunikat: "Notatka zapisana ✓"
+deactivate UI
+
+@enduml

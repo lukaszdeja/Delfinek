@@ -1,0 +1,49 @@
+@startuml Delfinek_Sekwencja_UsuniecieZajec
+title Diagram sekwencji – Administrator usuwa zajęcia
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI
+participant "HarmonogramController" as CTRL
+participant "HarmonogramSerwis" as HS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych" as DB
+
+A -> UI : Klika "Usuń zajęcia"\ni potwierdza dialog\n("Czy usunąć cyklicznie?")
+activate UI
+
+UI -> CTRL : DELETE /api/zajecia/{zajeciaId}\n?cyklicznie=true
+activate CTRL
+
+CTRL -> HS : usunZajecia(zajeciaId, cyklicznie)
+activate HS
+
+HS -> DB : SELECT zajecia (+ przyszłe\nterminy jeśli cyklicznie=true)
+DB --> HS : List<Zajecia>
+
+HS -> DB : SELECT klienci zapisani\nna te zajecia
+DB --> HS : List<Klient>
+
+HS -> DB : DELETE FROM zajecia\nWHERE id IN (...)
+DB --> HS : ok
+
+HS -> PS : wyslij(ANULOWANIE_ZAJEC,\n instruktor + klienci)
+activate PS
+PS -> DB : INSERT INTO powiadomienia (masowe)
+DB --> PS : ok
+deactivate PS
+
+HS --> CTRL : void
+deactivate HS
+
+CTRL --> UI : HTTP 204 No Content
+UI --> A : "Zajęcia usunięte.\nKursanci zostali powiadomieni."
+
+deactivate CTRL
+deactivate UI
+
+@enduml

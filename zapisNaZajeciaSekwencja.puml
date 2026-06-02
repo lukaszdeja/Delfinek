@@ -1,0 +1,68 @@
+@startuml Delfinek_Sekwencja_ZapisSieNaZajecia
+title Diagram sekwencji – Zapis klienta na zajęcia
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+skinparam noteBackgroundColor #E1F5EE
+skinparam noteBorderColor #0F6E56
+
+actor Klient as K
+participant "Aplikacja\nwebowa" as UI
+participant "ZapisController\n(REST API)" as CTRL
+participant "ZapisSerwis" as ZS
+participant "HarmonogramSerwis" as HS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych\n(SQL)" as DB
+participant "MailSerwis" as MAIL
+
+K -> UI : Wybiera dostępny termin\ni klika "Zapisz się"
+activate UI
+
+UI -> CTRL : POST /api/zapisy\n{klientId, zajeciaId}
+activate CTRL
+
+CTRL -> ZS : zapisz(klientId, zajeciaId)
+activate ZS
+
+ZS -> HS : pobierzZajecia(zajeciaId)
+activate HS
+HS -> DB : SELECT zajecia WHERE id = zajeciaId
+DB --> HS : Zajecia
+HS --> ZS : Zajecia
+deactivate HS
+
+ZS -> ZS : sprawdzCzyPelne(zajecia)
+alt zajecia.isPelne() == true
+    ZS --> CTRL : BusinessException("Brak wolnych miejsc")
+    CTRL --> UI : HTTP 409 Conflict\n{"error": "Brak wolnych miejsc"}
+    UI --> K : Komunikat: "Brak wolnych miejsc"
+else jest wolne miejsce
+    ZS -> DB : INSERT INTO zapisy\n(klientId, zajeciaId, status=AKTYWNY)
+    activate DB
+    DB --> ZS : Zapis (id, dataCzas)
+    deactivate DB
+
+    ZS -> PS : powiadomONowymZapisie(zapis)
+    activate PS
+
+    PS -> DB : INSERT INTO powiadomienia\n(typ=POTWIERDZENIE_ZAPISU, odbiorcaId=klientId)
+    DB --> PS : ok
+
+    PS -> MAIL : wyslijEmail(klient.email,\n"Potwierdzenie zapisu na zajęcia")
+    note right of MAIL : Email wysyłany\nasynchronicznie;\nmax 5 min
+    MAIL --> PS : ok
+    deactivate PS
+
+    ZS --> CTRL : Zapis
+    deactivate ZS
+
+    CTRL --> UI : HTTP 201 Created\n{zapisId, zajecia, dataCzas}
+    UI --> K : Powiadomienie push:\n"Zapisano na zajęcia ✓"
+end
+
+deactivate CTRL
+deactivate UI
+
+@enduml

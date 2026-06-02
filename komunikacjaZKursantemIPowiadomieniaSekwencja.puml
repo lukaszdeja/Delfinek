@@ -1,0 +1,100 @@
+@startuml Delfinek_Sekwencja_InstruktorChatPowiadomienie
+
+title Diagram sekwencji – Komunikacja instruktora z kursantem\noraz obsługa powiadomienia o zmianie grafiku
+
+skinparam sequenceArrowThickness 1.5
+skinparam participantBorderColor #534AB7
+skinparam participantBackgroundColor #EEEDFE
+skinparam sequenceLifeLineBorderColor #534AB7
+skinparam noteBackgroundColor #E1F5EE
+skinparam noteBorderColor #0F6E56
+
+actor Instruktor as I
+participant "Aplikacja\nwebowa" as UI
+participant "ChatController\n(REST API)" as CHAT_CTRL
+participant "ChatSerwis" as CS
+participant "PowiadomienieSerwis" as PS
+database "Baza danych\n(SQL)" as DB
+participant "MailSerwis" as MAIL
+actor Administrator as A
+
+I -> UI : Otwiera zakładkę "Wiadomości"\ni wybiera kursanta z listy
+activate UI
+
+UI -> CHAT_CTRL : GET /api/czat/konwersacja\n?u1=instruktorId&u2=klientId
+activate CHAT_CTRL
+
+CHAT_CTRL -> CS : pobierzLubUtworzKonwersacje\n(instruktorId, klientId)
+activate CS
+
+CS -> DB : SELECT * FROM konwersacje\nWHERE (u1=:instrId AND u2=:kliId)\nOR (u1=:kliId AND u2=:instrId)
+DB --> CS : Konwersacja (lub null)
+
+alt Konwersacja nie istnieje
+    CS -> DB : INSERT INTO konwersacje\n(u1=instruktorId, u2=klientId,\ndataUtworzenia=NOW())
+    DB --> CS : Konwersacja (nowa)
+end
+
+CS -> DB : SELECT * FROM wiadomosci\nWHERE konwersacjaId = :id\nORDER BY dataCzas ASC
+DB --> CS : List<Wiadomosc>
+
+CS --> CHAT_CTRL : Konwersacja + historia wiadomości
+deactivate CS
+
+CHAT_CTRL --> UI : HTTP 200 OK\n{konwersacjaId, wiadomosci: [...]}
+deactivate CHAT_CTRL
+
+UI --> I : Wyświetla okno czatu\nz historią wiadomości
+
+I -> UI : Wpisuje treść wiadomości\ni klika "Wyślij"
+UI -> CHAT_CTRL : POST /api/czat/wiadomosc\n{konwersacjaId, nadawcaId, tresc}
+activate CHAT_CTRL
+
+CHAT_CTRL -> CS : wyslijWiadomosc\n(konwId, instruktorId, tresc)
+activate CS
+
+CS -> DB : INSERT INTO wiadomosci\n(konwersacjaId, nadawcaId,\ntresc, dataCzas, przeczytana=false)
+DB --> CS : Wiadomosc (id, dataCzas)
+
+CS -> PS : wyslij(NOWA_WIADOMOSC,\n[klient], tresc)
+activate PS
+
+PS -> DB : INSERT INTO powiadomienia\n(typ=NOWA_WIADOMOSC,\nodbiorcaId=klientId, przeczytane=false)
+DB --> PS : ok
+
+PS --> CS : void
+deactivate PS
+
+CS --> CHAT_CTRL : Wiadomosc
+deactivate CS
+
+CHAT_CTRL --> UI : HTTP 201 Created\n{wiadomoscId, dataCzas}
+deactivate CHAT_CTRL
+
+UI --> I : Wiadomość widoczna\nze statusem ✓
+
+note over A, DB : Niezależny przepływ –\nAdministrator modyfikuje zajęcia instruktora
+
+A -> DB : UPDATE zajecia\nSET dataGodzina = :nowaData\nWHERE id = :zajeciaId
+
+DB --> A : ok
+
+A -> PS : powiadomOZmianieHarmonogramu(zajecia)
+activate PS
+
+PS -> DB : INSERT INTO powiadomienia\n(typ=ZMIANA_HARMONOGRAMU,\nodbiorcaId=instruktorId,\ntresc="Zmieniono termin zajęć")
+DB --> PS : ok
+
+PS -> MAIL : wyslijEmail(instruktor.email,\n"Zmiana w Twoim harmonogramie",\ntresc)
+activate MAIL
+note right of MAIL : Email wysyłany\nasynchronicznie;\nmax 5 min
+MAIL --> PS : ok
+deactivate MAIL
+
+PS --> A : void
+deactivate PS
+
+UI --> I : Powiadomienie push:\n"Zmiana w harmonogramie !"
+deactivate UI
+
+@enduml
