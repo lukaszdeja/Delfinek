@@ -1,5 +1,7 @@
 # Projekt "Delfinek"
 
+#Projekt realizowany w ramach przedmiotu inżynieria oprogramowania. Pierwsza wersja obejmuje projekt architektury systemu, jego specyfikację i prostą implementację, pełna implementacja jest możliwa w drugiej wersji, która powstanie w przyszłości.
+
 Skład zespołu projektowego:
 1. Łukasz Deja (team leader)
 2. Natalia Parszywka
