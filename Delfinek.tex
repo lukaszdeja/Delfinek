@@ -1601,4 +1601,118 @@ Utworzono lo-fi prototyp interfejsu użytkownika w programie Moqups. Link do pob
 
 Sporządzono diagram klas dla architektury, a także odpowiednie diagramy sekwencji dla implementowanych w przyszłości funkcjonalności. Ze względu na ich nieczytelnośc, nie umieszczono ich w tym dokumencie, pliki .puml oraz .png z diagramami są załączane w repozytorium githubowym.
 
+\section{Raport z badań interfejsu użytkownika}
+
+\noindent\textbf{Projekt:} Delfinek --- System zarządzania szkołą pływania\\
+\textbf{Zespół:} Łukasz Deja, Natalia Parszywka, Miłosz Błaszczyk\\
+\textbf{Data badania:} Maj 2026\\
+\textbf{Wersja dokumentu:} 1.1
+ 
+\subsection{Cel i zakres badania}
+ 
+Celem badania było zweryfikowanie użyteczności prototypu lo-fi interfejsu użytkownika systemu Delfinek przed wejściem w fazę implementacji. Badanie miało sprawdzić:
+ 
+\begin{itemize}
+    \item Czy nawigacja po systemie jest intuicyjna dla wszystkich grup użytkowników?
+    \item Czy proces zapisu na zajęcia jest zrozumiały i bezproblemowy?
+    \item Czy ekran logowania i rejestracji jest czytelny?
+    \item Jakie problemy napotykają użytkownicy przy pierwszym kontakcie z systemem?
+\end{itemize}
+ 
+\subsection{Metodologia}
+ 
+Badanie przeprowadziliśmy sami, metodą moderowanych testów użyteczności. Pokazaliśmy interaktywny prototyp wykonany w programie Moqups \textbf{5 osobom (studentom)}.
+ 
+Uczestnicy dostali do wykonania proste zadania:
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako klient:}
+\begin{enumerate}
+    \item Utworzenie konta i zalogowanie się
+    \item Wyszukanie dostępnych zajęć w nadchodzącym tygodniu
+    \item Zapisanie się na wybrane zajęcia
+    \item Sprawdzenie szczegółów zajęć (instruktor, tor, godzina)
+    \item Anulowanie zapisu na zajęcia
+    \item Skontaktowanie się z instruktorem przez czat
+\end{enumerate}
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako instruktor:}
+\begin{enumerate}
+    \item Zalogowanie się i przejrzenie grafiku
+    \item Wysłanie prośby o usunięcie istniejących zajęć
+    \item Przejrzenie i edytowanie informacji o kliencie
+    \item Zmiana hasła
+\end{enumerate}
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako pracownik biura:}
+\begin{enumerate}
+    \item Dodanie nowych zajęć do harmonogramu
+    \item Sprawdzenie dostępności torów
+    \item Dodanie nowych zajęć
+    \item Sprawdzenie szczegółów zajęć
+    \item Nadanie/Zmiana roli użytkownika systemu
+\end{enumerate}
+ 
+\subsection{Główne problemy i zaobserwowane błędy}
+ 
+Podczas sesji wyłapaliśmy kilka kluczowych problemów w interfejsie. Część z nich została otwarcie wskazana przez samych użytkowników, natomiast inne błędy (głównie projektowe i procesowe) zauważyliśmy my (twórcy) na podstawie obserwacji zachowania testerów.
+ 
+\subsubsection*{Problemy krytyczne (do natychmiastowej poprawy)}
+ 
+\begin{itemize}
+    \item \textbf{Brak potwierdzenia zapisu:} Po kliknięciu ,,Zapisz się'' na ekranie nic się nie pojawia. Uczestnik 4 klikał przycisk kilka razy, bo nie wiedział, czy system zadziałał.
+ 
+    \item \textbf{Brak potwierdzenia dodania zajęć przez admina:} Uczestnik 1 zauważył, że po zatwierdzeniu formularza przez administratora i dodaniu nowej lekcji do grafiku, system nie wyświetla żadnego komunikatu potwierdzającego sukces. Użytkownik nie wie, czy operacja się powiodła bez ręcznego sprawdzania kalendarza. Dodatkowo zauważono, że przy dodawaniu cyklicznych zajęć powinna być dodana informacja o pominiętych terminach ze względu na dni wolne od pracy (świąteczne).
+ 
+    \item \textbf{Brak informacji o godzinach zajęć w widoku torów dla pracownika biura:} Uczestnik 3 zauważył, że zajęcia były prezentowane bez wskazania czasu ich trwania, co mogło prowadzić do niejasności dotyczących harmonogramu. Dodano informację o godzinach zajęć.
+\end{itemize}
+ 
+\subsubsection*{Mniejsze błędy i niedogodności}
+ 
+\begin{itemize}
+    \item \textbf{Brak dostępu do opisu instruktora:} Podczas gdy w aktualnej wersji systemu klienci mogą już bez problemu zobaczyć opis instruktora przy logowaniu się na zajęcia (co było niemożliwe we wcześniejszej wersji), klient nie miał możliwości sprawdzenia informacji o instruktorze, do którego chciał się zapisać na zajęcia.
+ 
+    \item \textbf{Brak możliwości napisania do kursanta:} Przy przeglądaniu informacji o kliencie z perspektywy instruktora uczestnik 3 zauważył, że brakuje przydatnej funkcji napisania do swojego kursanta, bez konieczności wybierania z listy wszystkich użytkowników systemu.
+ 
+    \item \textbf{Brak informacji o cyklicznej rezygnacji z zajęć:} (zauważone przez twórców) Podczas usuwania lub anulowania uczestnictwa w zajęciach dostępna jest opcja cyklicznej rezygnacji. Interfejs nie informuje jednak, których konkretnie terminów dotyczy ta operacja. Aby sprawdzić, z jakich zajęć użytkownik rezygnuje, konieczne jest samodzielne przejrzenie harmonogramu.
+\end{itemize}
+ 
+\subsection{Podsumowanie spostrzeżeń uczestników}
+ 
+Użytkownicy bez większych problemów wykonywali większość zadań i uznali podstawową nawigację systemu za intuicyjną. Podczas testów użytkownicy zwrócili jednak uwagę na niedociągnięcia w obecnym projekcie:
+ 
+\begin{itemize}
+    \item Najczęściej zgłaszanym problemem był brak jasnej informacji zwrotnej po wykonaniu operacji (np. zapis na zajęcia, dodanie zajęć).
+    \item Użytkownicy oczekiwali większej przejrzystości i dostępności informacji kontekstowych (np. opis instruktora, godziny zajęć).
+    \item Problemy wynikały głównie z braku komunikatów systemowych, a nie z samej struktury interfejsu.
+    \item Pomimo uwag, ogólny odbiór prototypu był pozytywny.
+\end{itemize}
+ 
+\subsection{Rekomendacje zmian}
+ 
+Na podstawie uwag użytkowników oraz naszych własnych obserwacji wprowadzono następujące poprawki do prototypu:
+ 
+\begin{itemize}
+    \item Dodanie komunikatów potwierdzających wykonanie kluczowych operacji, takich jak zapis na zajęcia, anulowanie uczestnictwa czy dodanie nowych zajęć do harmonogramu.
+    \item Rozszerzenie informacji dostępnych dla klientów poprzez umożliwienie podglądu opisu instruktora przed zapisaniem się na zajęcia.
+    \item Uzupełnienie widoku torów o godziny rozpoczęcia i zakończenia zajęć w celu zwiększenia czytelności harmonogramu.
+    \item Dodanie możliwości szybkiego kontaktu instruktora z kursantem bez konieczności wyszukiwania go na liście wszystkich użytkowników.
+    \item Wyświetlanie informacji o terminach objętych cykliczną rezygnacją z zajęć przed zatwierdzeniem operacji.
+    \item Dodanie informacji o dodawanych terminach przez administratora jak i pominiętych podczas tworzenia harmonogramów cyklicznych obejmujących dni wolne od pracy i święta.
+\end{itemize}
+ 
+\subsection{Wnioski}
+ 
+Przeprowadzone badanie z udziałem 5 użytkowników dostarczyło kluczowych wniosków, które pozwoliły zoptymalizować system Delfinek przed etapem wdrożenia:
+ 
+\begin{itemize}
+    \item System w podstawowym zakresie okazał się intuicyjny i zrozumiały dla większości użytkowników, którzy bez większych trudności realizowali przygotowane scenariusze zadań.
+    \item Największym problemem był brak informacji zwrotnej po wykonaniu operacji, co prowadziło do niepewności użytkowników co do skuteczności wykonanych działań.
+    \item Istotne braki dotyczyły również dostępności informacji kontekstowych, takich jak szczegóły dotyczące instruktora, godziny zajęć czy zakres wykonywanych operacji, co utrudniało podejmowanie decyzji w systemie.
+    \item Pomimo wskazanych niedociągnięć, ogólny odbiór prototypu był pozytywny, a struktura systemu została oceniona jako przejrzysta.
+\end{itemize}
+
+
 \end{document}
