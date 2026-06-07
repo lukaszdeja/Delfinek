@@ -1,0 +1,1718 @@
+\documentclass[a4paper,12pt]{article}
+
+% Pakiety
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\geometry{margin=2.5cm}
+\usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+\usepackage{booktabs}
+\usepackage{array}
+
+
+% Dane dokumentu
+\title{Wstępny zarys projektu}
+
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+
+
+
+    % Tytuł projektu
+    {\Huge \textbf{Nazwa Projektu: Delinek}\par}
+    \vspace{0.5cm}
+
+    % Nazwa kodowa
+    {\Large Tematyka: System zarządzający szkołą pływania\par}
+    \vspace{2cm}
+
+    % Skład zespołu
+    {\large \textbf{Zespół:}\par}
+    \vspace{0.5cm}
+    {\large
+    Łukasz Deja (team leader)\\
+    Natalia Parszywka\\
+    Miłosz Błaszczyk\\
+    }
+    \vspace{2cm}
+
+    % Linki
+    {\large \textbf{Repozytorium GitHub:}\par}
+    \href{https://github.com/lukaszdeja/Delfinek}{https://github.com/lukaszdeja/Delfinek}
+
+    \vspace{1cm}
+    
+    {\large \textbf{Projekt na GitHubie:}\par}
+    \href{https://github.com/users/lukaszdeja/projects/1}{https://github.com/users/lukaszdeja/projects/1}
+    
+    \vspace{1cm}
+    
+    {\large \textbf{Tablica kanbanowa projektu (Trello):}\par}
+    \href{https://trello.com/b/H3ZY2HrB/projekt-delfinek}{https://trello.com/b/H3ZY2HrB/projekt-delfinek}
+
+    \vfill
+
+    % Data
+    {\large \today\par}
+
+\end{titlepage}
+
+
+
+\section{Co realizuje projekt?}
+
+Projekt ma realizować system zarządzania szkołą pływania \textbf{Delfinek}, który organizuje lekcje pływania dla dzieci i dorosłych, wspiera zapisy na zajęcia, przydział instruktorów i torów na basenie, ustala grafik zajęć i informuje kursantów o zmianach w grafiku. Celem projektu jest usprawnienie działania szkoły pływania i ułatwienie zarządzania nią, a także przyciągnięcie wielu nowych klientów do szkoły pływania poprzez reklamę i ułatwienie zapisywania się na kurs, co skutkować będzie większymi zyskami.
+
+\section{Wizja rozwiązania}
+
+System zostanie zrealizowany za pomocą aplikacji webowej, najprawdopodobniej strony internetowej, z której korzystać będą mogli klienci uczestniczący w zajęciach oraz instruktorzy a także administrator systemu. Te same funkcjonalności będzie realizować aplikacja mobilna stworzona dla wygody użytkowników.
+
+\subsection{Product Owner}
+
+Product Ownerem jest właściciel szkoły pływania, menedżer systemu, który jest w kontakcie z właścicielem obiektu sportowego - basenu i posiada informacje dotyczące obiektu. To on jest źródłem wiedzy dla systemu oraz dla zespołu projektowego odnośnie wymagań samego w sobie projektu. Wywiad z nim będzie źródłem informacji.
+
+\subsection{Podstawowe wymagania użytkownika}
+
+Przeprowadzono wywiad z osobami, które będą pełnić role pracowników biura, instruktorów oraz klientów aby sformułować wymagania.
+
+Klient szkoły pływania:
+
+\begin{itemize}
+    \item Jako uczestnik chcę zapisać się na zajęcia w dogodnym dla siebie terminie.
+    \item Jako uczestnik chcę być powiadamianym o zmianach w harmonogramie.
+    \item Jako uczestnik chcę być powiadamianym o pracach remontowych w obiekcie sportowym i ograniczeniach związanych z obiektem.
+    \item Jako uczestnik chcę być powiadamianym o cenach kursu oraz ich zmianach.
+        \item Jako uczestnik chcę mieć możliwość komunikacji z instruktorem i administratorem systemu.
+\end{itemize}
+
+\noindent Instruktor:
+
+\begin{itemize}[label]
+    \item Jako instruktor chcę mieć wgląd do grafiku, aby wiedzieć kiedy prowadzę lekcje.
+    \item Jako instruktor chcę mieć wgląd do danych użytkowników moich lekcji, aby móc odpowiednio dostosować zajęcia do uczestników.
+    \item Jako instruktor chcę być powiadamianym o zmianach w harmonogramie.
+    \item Jako instruktor chcę być powiadamianym o moich nowych kursantach.
+\end{itemize}
+
+\noindent Administrator systemu:
+
+\begin{itemize}
+    \item Jako pracownik biura chcę móc zarządzać harmonogramem uczestników, aby uniknąć konfliktów i zbyt dużej liczby kursantów w danych godzinach.
+    \item Jako pracownik biura chcę mieć informacje o obiekcie sportowym w danych godzinach i dostępnych torach oraz o pracach remontowych.
+    \item Jako pracownik biura chcę móc zarządzać torami basenowymi w przeznaczonych dla szkoły godzinach.
+    \item Jako pracownik biura chcę mieć informacje o preferencjach godzinowych klientów, aby móc efektywnie dopasować grafik.
+    \item Jako pracownik biura chcę powiadamiać kursantów oraz instruktorów o zmianach w harmonogramie oraz cenach za kursy.
+    \item Jako pracownik biura chcę przekazywać instruktorom informacje, które nie są poufne i nie naruszą prywatności klientów.
+\end{itemize}
+
+\section{Zakres usług systemu}
+
+System obejmuje następujące funkcjonalności:
+
+\begin{itemize}
+    \item Rejestracja i logowanie użytkowników (klienci, instruktorzy, administrator).
+    \item Zapisy uczestników na zajęcia pływania z uwzględnieniem dostępnych terminów.
+    \item Zarządzanie harmonogramem zajęć (tworzenie, edycja, usuwanie).
+    \item Przydzielanie instruktorów oraz torów basenowych do konkretnych zajęć.
+    \item Powiadamianie użytkowników (klientów i instruktorów) o zmianach w grafiku.
+    \item Wyświetlanie grafiku zajęć dla klientów i instruktorów.
+    \item Zarządzanie danymi kursantów (dla administratora i instruktorów w ograniczonym zakresie).
+    \item Informowanie o dostępności obiektu oraz ewentualnych ograniczeniach (np. remonty).
+    \item Chat do komunikacji administratora i instruktora z klientem.
+\end{itemize}
+
+\subsection{Ograniczenia projektu}
+
+W ramach projektu nie będą realizowane następujące funkcjonalności:
+
+\begin{itemize}
+    \item System płatności online (np. integracja z operatorami płatności).
+    \item Zaawansowane systemy rekomendacji lub analizy danych (np. AI do dopasowywania grup).
+    \item Integracja z zewnętrznymi systemami (np. systemami basenu lub księgowości).
+    \item Obsługa wielu oddziałów szkoły (system zakłada jedną lokalizację).
+\end{itemize}
+
+\noindent Zakres projektu został ograniczony w celu skupienia się na kluczowych funkcjonalnościach wspierających zarządzanie szkołą pływania oraz zapewnienia możliwości jego realizacji w założonym czasie.
+
+\section{Historyjki użytkownika}
+
+Na podstawie zebranego wywiadu z potencjalnymi klientami oraz zakresu usług realizowanych przez system sporządzono funkcje oraz grupy funkcji (historyjki użytkownika i epiki):
+
+
+   \noindent {\large \textbf{Historyjki użytkownika (Miro):}\par}
+    \href{https://miro.com/app/board/uXjVGhIZc0o=/?share_link_id=551717895193&fbclid=IwY2xjawRN7u5leHRuA2FlbQIxMQBzcnRjBmFwcF9pZAEwAAEe4j1wzOOpdSMzaaRcfPo6reTUNB9p4stcNAqF229sS7GpICpJkEuh1ZtUa4c_aem_KaomdIRAQT2vZ8EuAeP3vA}{Historyjki użytkownika}
+
+\section{Kryteria akceptacji}
+
+Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteria akceptacji:
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient szkoły chcę zapisać się na zajęcia w dogodnym dla siebie terminie.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę zapisu i widzi tylko dostępne terminy zajęć (wolne miejsca).
+    \item Użytkownik wybiera termin klikając na niego i klika przycisk zapisz.
+    \item System przypisuje użytkownika do konkretnej grupy zajęciowej.
+    \item Po zapisie użytkownik otrzymuje potwierdzenie zapisu - powiadomienie oraz wiadomość mailowa o zapisie.
+    \item Użytkownik może anulować zapis na zajęcia, po kliknięciu na zajęcia na które klient jest zapisany, pojawią się przycisk wypisz mnie.
+    \item System blokuje możliwość zapisu na zajęcia, które są już pełne.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas odpowiedzi systemu na zapis - wysłania powiadomienia - nie powinien przekraczać 5 sekund. Czas wysłania wiadomości mailowej nie przekracza 5 minut.
+    \item System działa prawidłowo w dużym obciążeniu, przy próbie 50 jednoczesnych zapisów.
+    \item System prawidłowo zapisuje dane w bazie danych, baza danych obsługuje transakcje zabezpieczające mechanizm zapisywania się. Baza danych jest zabezpieczona przed wyciekami.
+    \item Zapisy mają przyjazny interfejs użytkownika, wspierający osoby niepełnosprawne.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Poprawny zapis na zajęcia}
+\begin{itemize}
+    \item \textbf{Given} użytkownik jest zalogowany i wybiera dostępne zajęcia.
+    \item \textbf{When} użytkownik wybiera termin z wolnymi miejscami i klika „Zapisz się”
+    \item \textbf{Then} system zapisuje użytkownika na zajęcia i wyświetla potwierdzenie
+\end{itemize}
+
+
+\textbf{Scenariusz 2: Anulowanie zapisu}
+\begin{itemize}
+    \item \textbf{Given} użytkownik jest zapisany na zajęcia
+    \item \textbf{When} użytkownik wybiera opcję „Anuluj zapis”
+    \item \textbf{Then} system usuwa użytkownika z listy uczestników i potwierdza operację
+\end{itemize}
+
+\textbf{Scenariusz 3: Równoczesny zapis wielu użytkowników}
+\begin{itemize}
+    \item \textbf{Given} dwóch użytkowników próbuje zapisać się na ostatnie wolne miejsce
+    \item \textbf{When} obaj zatwierdzają zapis w tym samym czasie
+    \item \textbf{Then} tylko jeden użytkownik zostaje zapisany, a drugi otrzymuje komunikat o braku miejsc
+\end{itemize}
+
+\noindent \textbf{Historyjka:} Jako uczestnik chcę mieć możliwość komunikacji z instruktorem i pracownikiem biura (obsługą).
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz jest zapisany na co najmniej jedne zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę czatu.
+    \item Użytkownik wybiera z listy kim chciałby chatować - może wybrać przypisanych do siebie instruktorów lub pracownika biura.
+    \item Użytkownik wprowadza treść wiadomości i wysyła ją klikając przycisk "Wyślij" lub enter.
+    \item System zapisuje wiadomość i zapisuje ją w bazie danych po czym dostarcza ją do adresata.
+    \item Odbiorca (instruktor lub pracownik) może odpowiedzieć na wiadomość.
+    \item Użytkownik otrzymuje powiadomienie o nowej wiadomości.
+    \item System przechowuje historię wiadomości dostępną dla użytkownika.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas dostarczenia wiadomości w systemie nie powinien przekraczać 5 sekund.
+    \item System działa poprawnie przy jednoczesnej komunikacji wielu użytkowników (np. 50 aktywnych rozmów).
+    \item Wiadomości są prawidłowo zapisywane w bazie danych i zabezpieczone przed wyciekami.
+    \item Komunikacja jest zabezpieczona (szyfrowanie HTTPS, autoryzacja użytkowników).
+    \item System zapewnia dostępność komunikacji na poziomie co najmniej 99\%.
+    \item Interfejs komunikacji jest intuicyjny, czytelny i dostosowany do urządzeń mobilnych oraz desktopowych.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wysłanie wiadomości do instruktora}
+\begin{itemize}
+    \item \textbf{Given} użytkownik jest zalogowany i ma przypisanego instruktora
+    \item \textbf{When} użytkownik wpisuje wiadomość i klika „Wyślij”
+    \item \textbf{Then} wiadomość zostaje zapisana i dostarczona do instruktora
+\end{itemize}
+
+\textbf{Scenariusz 2: Odbiór wiadomości}
+\begin{itemize}
+    \item \textbf{Given} użytkownik otrzymał wiadomość
+    \item \textbf{When} użytkownik wchodzi w zakładkę wiadomości
+    \item \textbf{Then} system wyświetla nową wiadomość
+\end{itemize}
+
+
+
+\textbf{Scenariusz 3: Odpowiedź na wiadomość}
+\begin{itemize}
+    \item \textbf{Given} użytkownik otrzymał wiadomość
+    \item \textbf{When} odpowiada na wiadomość i klika „Wyślij”
+    \item \textbf{Then} odpowiedź zostaje zapisana i dostarczona do nadawcy
+\end{itemize}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę mieć wgląd do grafiku, aby wiedzieć kiedy prowadzę lekcje.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę instruktora.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę grafiku.
+    \item System wyświetla grafik zajęć przypisanych do instruktora.
+    \item Grafik zawiera informacje o dacie, godzinie, grupie oraz przypisanym torze basenowym.
+    \item Użytkownik może przeglądać grafik w podziale na dni, tygodnie lub miesiące.
+    \item Użytkownik może kliknąć w konkretne zajęcia, aby zobaczyć szczegóły (lista uczestników, poziom grupy).
+    \item System aktualizuje grafik w czasie rzeczywistym w przypadku zmian.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas ładowania grafiku nie powinien przekraczać 5 sekund.
+    \item System działa poprawnie przy jednoczesnym dostępie wielu instruktorów (20  użytkowników).
+    \item Dane grafiku są poprawnie pobierane i zapisywane w bazie danych oraz zabezpieczone przed utratą.
+    \item System zapewnia aktualność danych (brak rozbieżności między bazą a widokiem użytkownika).
+    \item Interfejs grafiku jest czytelny, intuicyjny i dostosowany do urządzeń mobilnych oraz desktopowych.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie grafiku instruktora}
+\begin{itemize}
+    \item \textbf{Given} użytkownik jest zalogowany jako instruktor
+    \item \textbf{When} użytkownik wchodzi w zakładkę grafiku
+    \item \textbf{Then} system wyświetla grafik zajęć przypisanych do instruktora
+\end{itemize}
+
+\textbf{Scenariusz 2: Wyświetlenie szczegółów zajęć}
+\begin{itemize}
+    \item \textbf{Given} użytkownik przegląda grafik
+    \item \textbf{When} użytkownik klika na konkretne zajęcia
+    \item \textbf{Then} system wyświetla szczegóły zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja grafiku}
+\begin{itemize}
+    \item \textbf{Given} grafik instruktora jest wyświetlany
+    \item \textbf{When} administrator zmienia termin zajęć
+    \item \textbf{Then} system aktualizuje grafik i wyświetla nową informację
+\end{itemize}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę tworzyć harmonogram.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę zarządzania harmonogramem.
+    \item Użytkownik wybiera opcję dodania nowych zajęć.
+    \item Użytkownik wprowadza dane zajęć: datę, godzinę, tor basenowy oraz przypisuje instruktora.
+    \item System sprawdza dostępność wybranego toru oraz instruktora w danym terminie.
+    \item W przypadku braku konfliktów system zapisuje zajęcia w harmonogramie.
+    \item System przypisuje zajęcia do wybranego instruktora - instruktor otrzymuje powiadomienie.
+    \item System aktualizuje grafik dostępny dla instruktorów i klientów.
+    \item W przypadku konfliktu (np. zajęty tor lub instruktor) system wyświetla komunikat o błędzie i blokuje zapis.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas zapisu nowych zajęć nie powinien przekraczać 5 sekund.
+    \item System działa poprawnie przy jednoczesnej edycji harmonogramu przez wielu administratorów (5 użytkowników).
+    \item Dane harmonogramu są poprawnie zapisywane w bazie danych i zabezpieczone przed wyciekami.
+    \item System zapewnia spójność danych (brak możliwości podwójnej rezerwacji toru lub instruktora).
+    \item Interfejs zarządzania harmonogramem jest intuicyjny i czytelny..
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Dodanie nowych zajęć}
+\begin{itemize}
+    \item \textbf{Given} użytkownik jest zalogowany jako administrator
+    \item \textbf{When} wprowadza dane zajęć i klika „Dodaj”
+    \item \textbf{Then} system zapisuje zajęcia w harmonogramie
+\end{itemize}
+
+\textbf{Scenariusz 2: Konflikt terminu instruktora}
+\begin{itemize}
+    \item \textbf{Given} instruktor ma już przypisane zajęcia w danym terminie
+    \item \textbf{When} administrator próbuje przypisać go do nowych zajęć w tym samym czasie
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt toru basenowego}
+\begin{itemize}
+    \item \textbf{Given} tor basenowy jest zajęty w danym terminie
+    \item \textbf{When} administrator próbuje dodać zajęcia na tym torze i godzinie
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\textbf{Scenariusz 4: Aktualizacja grafiku po dodaniu zajęć}
+\begin{itemize}
+    \item \textbf{Given} nowe zajęcia zostały dodane
+    \item \textbf{When} instruktor lub klient otwiera grafik
+    \item \textbf{Then} system wyświetla zaktualizowany harmonogram
+\end{itemize}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę edytować harmonogram oraz powiadamiać o tym instruktorów oraz klientów.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę zarządzania harmonogramem.
+    \item Użytkownik wybiera istniejące zajęcia do edycji.
+    \item Użytkownik modyfikuje dane zajęć (np. godzinę, tor, instruktora).
+    \item System sprawdza dostępność nowego terminu, toru oraz instruktora.
+    \item W przypadku braku konfliktów system zapisuje zmiany w harmonogramie.
+    \item System aktualizuje grafik dla instruktorów i klientów.
+    \item System wysyła powiadomienia do przypisanych instruktorów oraz zapisanych klientów o zmianie w harmonogramie.
+    \item W przypadku konfliktu system blokuje zapis zmian i wyświetla komunikat o błędzie.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas edycji i zapisania zmian nie powinien przekraczać 5 sekund.
+    \item Powiadomienia w systemie są dostarczane w czasie do 5 sekund a wiadomości mailowe do 5 minut.
+    \item System działa poprawnie przy jednoczesnej edycji harmonogramu przez wielu administratorów (5 użytkowników).
+    \item Dane są poprawnie zapisywane w bazie danych i zabezpieczone przed utratą.
+    \item System zapewnia spójność danych (brak konfliktów terminów, torów i instruktorów).
+    \item Interfejs edycji harmonogramu jest intuicyjny i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Edycja zajęć}
+\begin{itemize}
+    \item \textbf{Given} administrator jest zalogowany i wybiera istniejące zajęcia
+    \item \textbf{When} zmienia dane zajęć i klika „Zapisz”, edycja nie koliduje z niczym innym.
+    \item \textbf{Then} system zapisuje zmiany w harmonogramie
+\end{itemize}
+
+\textbf{Scenariusz 2: Powiadomienie użytkowników}
+\begin{itemize}
+    \item \textbf{Given} zajęcia zostały zmodyfikowane.
+    \item \textbf{When} zmiany zostają zapisane.
+    \item \textbf{Then} system wysyła powiadomienia do instruktorów i klientów
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt podczas edycji}
+\begin{itemize}
+    \item \textbf{Given} nowy termin koliduje z innymi zajęciami
+    \item \textbf{When} administrator próbuje zapisać zmiany
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\textbf{Scenariusz 4: Aktualizacja grafiku}
+\begin{itemize}
+    \item \textbf{Given} zmiany w harmonogramie zostały zapisane
+    \item \textbf{When} użytkownik otwiera grafik
+    \item \textbf{Then} system wyświetla zaktualizowane dane
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę tworzyć nowe zajęcia (data, godzina, instruktor, tor), aby budować harmonogram.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik wchodzi w zakładkę zarządzania harmonogramem.
+    \item Użytkownik wybiera opcję dodania nowych zajęć.
+    \item Użytkownik wprowadza dane zajęć (data, godzina, instruktor, tor).
+    \item System sprawdza dostępność wybranego instruktora oraz toru w podanym terminie.
+    \item System weryfikuje poprawność wprowadzonych danych.
+    \item W przypadku braku konfliktów system zapisuje nowe zajęcia w harmonogramie, i wyświetla komunikat o powodzeniu.
+    \item System aktualizuje grafik instruktorów oraz dostępność torów.
+    \item W przypadku konfliktu terminów lub błędnych danych system blokuje utworzenie zajęć i wyświetla komunikat o błędzie.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas tworzenia i zapisania nowych zajęć nie powinien przekraczać 5 sekund.
+    \item System umożliwia jednoczesne tworzenie zajęć przez wielu administratorów (5 użytkowników).
+    \item Dane nowych zajęć są poprawnie zapisywane w bazie danych i zabezpieczone przed utratą.
+    \item System zapewnia spójność danych (brak konfliktów terminów, torów i instruktorów).
+    \item Interfejs dodawania zajęć jest intuicyjny i czytelny.
+    \item System waliduje poprawność wprowadzanych danych przed zapisaniem zajęć.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Utworzenie nowych zajęć}
+\begin{itemize}
+    \item \textbf{Given} administrator jest zalogowany i otwiera formularz dodawania zajęć
+    \item \textbf{When} wprowadza poprawne dane zajęć i klika „Zapisz”
+    \item \textbf{Then} system zapisuje nowe zajęcia w harmonogramie
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} nowe zajęcia zostały utworzone
+    \item \textbf{When} użytkownik otwiera harmonogram
+    \item \textbf{Then} system wyświetla nowe zajęcia w grafiku
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt instruktora lub toru}
+\begin{itemize}
+    \item \textbf{Given} wybrany instruktor lub tor jest już zajęty w podanym terminie
+    \item \textbf{When} administrator próbuje utworzyć nowe zajęcia
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\textbf{Scenariusz 4: Walidacja danych formularza}
+\begin{itemize}
+    \item \textbf{Given} administrator wypełnia formularz dodawania zajęć
+    \item \textbf{When} pozostawia wymagane pola puste lub wpisuje błędne dane
+    \item \textbf{Then} system wyświetla komunikaty walidacyjne i nie zapisuje zajęć
+\end{itemize}
+
+\vspace{0,5cm}
+
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę usuwać zajęcia, aby reagować na sytuacje wyjątkowe.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia do usunięcia.
+    \item System wyświetla okno potwierdzenia usunięcia.
+    \item Użytkownik potwierdza usunięcie zajęć.
+    \item System usuwa zajęcia z harmonogramu.
+    \item System aktualizuje grafik instruktorów oraz dostępność torów.
+    \item System wyświetla komunikat o poprawnym usunięciu zajęć.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas usunięcia zajęć nie powinien przekraczać 5 sekund.
+    \item System zapewnia spójność danych po usunięciu zajęć.
+    \item Dane są poprawnie aktualizowane w bazie danych.
+    \item Interfejs usuwania zajęć jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Usunięcie zajęć}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera istniejące zajęcia
+    \item \textbf{When} potwierdza ich usunięcie
+    \item \textbf{Then} system usuwa zajęcia z harmonogramu
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} zajęcia zostały usunięte
+    \item \textbf{When} użytkownik otwiera harmonogram
+    \item \textbf{Then} system nie wyświetla usuniętych zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Anulowanie usunięcia}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera opcję usunięcia zajęć
+    \item \textbf{When} anuluje operację
+    \item \textbf{Then} system pozostawia zajęcia bez zmian
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura (administrator) chcę nadawać role (instruktor, pracownik biura) użytkownikom w celu kontroli dostępu.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Administrator przechodzi do panelu zarządzania użytkownikami.
+    \item Administrator wybiera użytkownika z listy.
+    \item Administrator wybiera nową rolę dla użytkownika.
+    \item System sprawdza poprawność uprawnień administratora.
+    \item System zapisuje zmiany ról użytkownika.
+    \item System aktualizuje poziom dostępu użytkownika.
+    \item System wyświetla komunikat o poprawnym nadaniu roli.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas zmiany roli użytkownika nie powinien przekraczać 5 sekund.
+    \item System zapewnia bezpieczeństwo i poprawność uprawnień użytkowników.
+    \item Zmiany ról są poprawnie zapisywane w bazie danych.
+    \item Interfejs zarządzania rolami jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Nadanie roli użytkownikowi}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera użytkownika
+    \item \textbf{When} nadaje mu nową rolę i zapisuje zmiany
+    \item \textbf{Then} system aktualizuje uprawnienia użytkownika
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak uprawnień}
+\begin{itemize}
+    \item \textbf{Given} użytkownik bez roli administratora próbuje zmienić role
+    \item \textbf{When} wykonuje operację nadania roli
+    \item \textbf{Then} system blokuje dostęp i wyświetla komunikat o braku uprawnień
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja dostępu}
+\begin{itemize}
+    \item \textbf{Given} rola użytkownika została zmieniona
+    \item \textbf{When} użytkownik loguje się ponownie
+    \item \textbf{Then} system przydziela dostęp zgodny z nową rolą
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę wysyłać powiadomienia i komunikaty do klientów oraz instruktorów, w celu informowania o zmianach, remontach lub ograniczeniach.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do panelu komunikatów.
+    \item Użytkownik tworzy nową wiadomość lub powiadomienie.
+    \item Użytkownik wybiera grupę odbiorców (klienci, instruktorzy lub wszyscy).
+    \item Użytkownik wpisuje treść komunikatu i zatwierdza wysyłkę.
+    \item System zapisuje komunikat oraz wysyła powiadomienia do wybranych użytkowników.
+    \item System wyświetla potwierdzenie poprawnego wysłania wiadomości.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund.
+    \item Wiadomości mailowe są wysyłane w czasie do 5 minut.
+    \item System zapewnia poprawność dostarczenia komunikatów do wybranych odbiorców.
+    \item Interfejs tworzenia komunikatów jest intuicyjny i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wysłanie komunikatu}
+\begin{itemize}
+    \item \textbf{Given} administrator tworzy nowy komunikat
+    \item \textbf{When} wybiera odbiorców i zatwierdza wysyłkę
+    \item \textbf{Then} system wysyła powiadomienia do wybranych użytkowników
+\end{itemize}
+
+\textbf{Scenariusz 2: Komunikat do wszystkich użytkowników}
+\begin{itemize}
+    \item \textbf{Given} administrator wybiera wszystkich odbiorców
+    \item \textbf{When} wysyła komunikat
+    \item \textbf{Then} system dostarcza wiadomość klientom oraz instruktorom
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak treści komunikatu}
+\begin{itemize}
+    \item \textbf{Given} administrator tworzy nowy komunikat
+    \item \textbf{When} próbuje wysłać pustą wiadomość
+    \item \textbf{Then} system wyświetla komunikat walidacyjny i blokuje wysyłkę
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę przydzielać instruktorów lub tory do zajęć, które mają je jeszcze nieprzydzielone.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do serwisu oraz posiada rolę administratora (pracownik biura).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia bez przypisanego instruktora lub toru.
+    \item Użytkownik wybiera dostępnego instruktora lub tor.
+    \item System sprawdza dostępność wybranego instruktora oraz toru.
+    \item W przypadku braku konfliktów system zapisuje przydział.
+    \item System aktualizuje harmonogram zajęć.
+    \item System wyświetla komunikat o poprawnym przypisaniu zasobów.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas przypisania instruktora lub toru nie powinien przekraczać 5 sekund.
+    \item System zapewnia spójność danych i brak konfliktów terminów.
+    \item Zmiany są poprawnie zapisywane w bazie danych.
+    \item Interfejs przypisywania zasobów jest intuicyjny i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Przypisanie instruktora}
+\begin{itemize}
+    \item \textbf{Given} istnieją zajęcia bez przypisanego instruktora
+    \item \textbf{When} administrator wybiera instruktora i zapisuje zmiany
+    \item \textbf{Then} system przypisuje instruktora do zajęć
+\end{itemize}
+
+\textbf{Scenariusz 2: Przypisanie toru}
+\begin{itemize}
+    \item \textbf{Given} istnieją zajęcia bez przypisanego toru
+    \item \textbf{When} administrator wybiera tor i zapisuje zmiany
+    \item \textbf{Then} system przypisuje tor do zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Konflikt dostępności}
+\begin{itemize}
+    \item \textbf{Given} wybrany instruktor lub tor jest zajęty
+    \item \textbf{When} administrator próbuje zapisać przydział
+    \item \textbf{Then} system blokuje zapis i wyświetla komunikat o konflikcie
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę zalogować się do systemu, aby uzyskać dostęp do swojego profilu i zapisów w harmonogramie.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada aktywne konto w systemie.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do formularza logowania.
+    \item Użytkownik wprowadza login oraz hasło.
+    \item System weryfikuje poprawność danych logowania.
+    \item W przypadku poprawnych danych system loguje użytkownika.
+    \item System przekierowuje użytkownika do panelu klienta.
+    \item W przypadku błędnych danych system wyświetla komunikat o błędzie.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas logowania nie powinien przekraczać 5 sekund.
+    \item Dane logowania są przesyłane i przechowywane w sposób bezpieczny.
+    \item System zapewnia ochronę przed nieautoryzowanym dostępem.
+    \item Interfejs logowania jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Poprawne logowanie}
+\begin{itemize}
+    \item \textbf{Given} klient posiada aktywne konto
+    \item \textbf{When} wprowadza poprawny login i hasło
+    \item \textbf{Then} system loguje użytkownika i wyświetla panel klienta
+\end{itemize}
+
+\textbf{Scenariusz 2: Błędne dane logowania}
+\begin{itemize}
+    \item \textbf{Given} klient znajduje się na stronie logowania
+    \item \textbf{When} wprowadza niepoprawny login lub hasło
+    \item \textbf{Then} system wyświetla komunikat o błędzie i nie loguje użytkownika
+\end{itemize}
+
+\textbf{Scenariusz 3: Dostęp do harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} klient został poprawnie zalogowany
+    \item \textbf{When} przechodzi do harmonogramu
+    \item \textbf{Then} system wyświetla jego zapisy na zajęcia
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę przeglądać listę dostępnych zajęć z podziałem na dni i godziny, aby wybrać odpowiedni termin dla siebie.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do harmonogramu dostępnych zajęć.
+    \item System pobiera aktualną listę zajęć.
+    \item System wyświetla zajęcia z podziałem na dni oraz godziny.
+    \item Użytkownik może przeglądać szczegóły zajęć (instruktor, tor, liczba miejsc).
+    \item Użytkownik wybiera interesujący go termin zajęć.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia harmonogramu nie powinien przekraczać 5 sekund.
+    \item System wyświetla wyłącznie aktualne i dostępne zajęcia.
+    \item Dane harmonogramu są zgodne z aktualnym planem zajęć.
+    \item Interfejs harmonogramu jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie listy zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient jest zalogowany do systemu
+    \item \textbf{When} otwiera harmonogram zajęć
+    \item \textbf{Then} system wyświetla listę dostępnych zajęć z podziałem na dni i godziny
+\end{itemize}
+
+\textbf{Scenariusz 2: Wyświetlenie szczegółów zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient przegląda harmonogram zajęć
+    \item \textbf{When} wybiera konkretne zajęcia
+    \item \textbf{Then} system wyświetla szczegóły wybranego terminu
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak dostępnych zajęć}
+\begin{itemize}
+    \item \textbf{Given} w systemie nie ma dostępnych zajęć
+    \item \textbf{When} klient otwiera harmonogram
+    \item \textbf{Then} system wyświetla informację o braku dostępnych terminów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę móc anulować zapis na zajęcia, aby móc zwolnić miejsce.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu oraz zapisany na zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do swojego harmonogramu zajęć.
+    \item Użytkownik wybiera zajęcia, z których chce się wypisać.
+    \item System wyświetla opcję anulowania zapisu.
+    \item Użytkownik potwierdza anulowanie zapisu.
+    \item System usuwa klienta z listy uczestników zajęć.
+    \item System aktualizuje liczbę dostępnych miejsc.
+    \item System wyświetla komunikat o poprawnym anulowaniu zapisu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas anulowania zapisu nie powinien przekraczać 5 sekund.
+    \item System poprawnie aktualizuje liczbę wolnych miejsc.
+    \item Dane są poprawnie zapisywane w bazie danych.
+    \item Interfejs anulowania zapisu jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Anulowanie zapisu}
+\begin{itemize}
+    \item \textbf{Given} klient jest zapisany na zajęcia
+    \item \textbf{When} wybiera opcję anulowania zapisu i potwierdza operację
+    \item \textbf{Then} system usuwa klienta z listy uczestników
+\end{itemize}
+
+\textbf{Scenariusz 2: Aktualizacja liczby miejsc}
+\begin{itemize}
+    \item \textbf{Given} klient anulował zapis na zajęcia
+    \item \textbf{When} inny użytkownik przegląda dostępne zajęcia
+    \item \textbf{Then} system wyświetla zaktualizowaną liczbę wolnych miejsc
+\end{itemize}
+
+\textbf{Scenariusz 3: Anulowanie operacji}
+\begin{itemize}
+    \item \textbf{Given} klient wybiera opcję wypisania się z zajęć
+    \item \textbf{When} anuluje operację
+    \item \textbf{Then} system pozostawia zapis na zajęcia bez zmian
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę widzieć szczegóły zajęć, na które jestem zapisany (instruktor, tor, godzina), aby być przygotowanym.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient jest zalogowany do systemu oraz zapisany na co najmniej jedne zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do swojego harmonogramu.
+    \item System pobiera listę zajęć przypisanych do klienta.
+    \item System wyświetla listę zapisanych zajęć.
+    \item Użytkownik wybiera konkretne zajęcia.
+    \item System wyświetla szczegóły zajęć (instruktor, tor, data, godzina).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia szczegółów zajęć nie powinien przekraczać 5 sekund.
+    \item System wyświetla aktualne dane zgodne z harmonogramem.
+    \item Dostęp do szczegółów jest ograniczony do zalogowanego użytkownika.
+    \item Interfejs prezentacji szczegółów zajęć jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie szczegółów zajęć}
+\begin{itemize}
+    \item \textbf{Given} klient jest zapisany na zajęcia
+    \item \textbf{When} wybiera konkretne zajęcia w harmonogramie
+    \item \textbf{Then} system wyświetla szczegóły (instruktor, tor, godzina)
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak zapisów na zajęcia}
+\begin{itemize}
+    \item \textbf{Given} klient nie jest zapisany na żadne zajęcia
+    \item \textbf{When} otwiera harmonogram
+    \item \textbf{Then} system informuje o braku zapisów
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja danych zajęć}
+\begin{itemize}
+    \item \textbf{Given} dane zajęć zostały zmienione przez administratora
+    \item \textbf{When} klient otwiera szczegóły zajęć
+    \item \textbf{Then} system wyświetla zaktualizowane informacje
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę odzyskać hasło, aby móc ponownie uzyskać dostęp do konta.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada konto w systemie i ma dostęp do adresu e-mail przypisanego do konta.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Użytkownik przechodzi do formularza odzyskiwania hasła.
+    \item Użytkownik podaje adres e-mail powiązany z kontem.
+    \item System weryfikuje poprawność adresu e-mail.
+    \item System generuje link do resetu hasła i wysyła go na e-mail użytkownika.
+    \item Użytkownik otwiera link i ustawia nowe hasło.
+    \item System zapisuje nowe hasło i umożliwia logowanie.
+    \item System wyświetla komunikat o poprawnej zmianie hasła.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Link do resetu hasła powinien być ważny przez określony czas (np. 15 minut).
+    \item Czas wysłania e-maila nie powinien przekraczać 5 minut.
+    \item System zapewnia bezpieczeństwo procesu odzyskiwania hasła.
+    \item Interfejs odzyskiwania hasła jest prosty i czytelny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Poprawne odzyskanie hasła}
+\begin{itemize}
+    \item \textbf{Given} klient wprowadza poprawny adres e-mail
+    \item \textbf{When} wysyła żądanie resetu hasła
+    \item \textbf{Then} system wysyła link do resetu hasła na e-mail
+\end{itemize}
+
+\textbf{Scenariusz 2: Nieistniejący e-mail}
+\begin{itemize}
+    \item \textbf{Given} użytkownik podaje adres e-mail
+    \item \textbf{When} adres nie istnieje w systemie
+    \item \textbf{Then} system wyświetla komunikat o braku konta
+\end{itemize}
+
+\textbf{Scenariusz 3: Zmiana hasła}
+\begin{itemize}
+    \item \textbf{Given} użytkownik otrzymał aktywny link do resetu hasła
+    \item \textbf{When} ustawia nowe hasło i zatwierdza
+    \item \textbf{Then} system zapisuje nowe hasło i umożliwia logowanie
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako klient chcę otrzymywać wszystkie istotne komunikaty i powiadomienia o zmianach w harmonogramie oraz ograniczeniach obiektu.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Klient posiada aktywne konto w systemie oraz ma włączone powiadomienia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Administrator tworzy komunikat lub powiadomienie.
+    \item System identyfikuje użytkowników, których dotyczą zmiany.
+    \item System wysyła powiadomienie do klientów.
+    \item Użytkownik otrzymuje powiadomienie w systemie oraz/lub e-mail.
+    \item Użytkownik może wyświetlić szczegóły komunikatu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund.
+    \item Wiadomości e-mail są dostarczane w czasie do 5 minut.
+    \item System zapewnia dostarczenie komunikatów do właściwych odbiorców.
+    \item Użytkownik ma możliwość łatwego przeglądania historii powiadomień.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Otrzymanie powiadomienia o zmianie}
+\begin{itemize}
+    \item \textbf{Given} administrator wysyła komunikat o zmianie w harmonogramie
+    \item \textbf{When} system przetwarza komunikat
+    \item \textbf{Then} klient otrzymuje powiadomienie
+\end{itemize}
+
+\textbf{Scenariusz 2: Otrzymanie komunikatu o ograniczeniach obiektu}
+\begin{itemize}
+    \item \textbf{Given} administrator publikuje informację o ograniczeniach obiektu
+    \item \textbf{When} komunikat jest wysyłany
+    \item \textbf{Then} system dostarcza powiadomienie do klientów
+\end{itemize}
+
+\textbf{Scenariusz 3: Przegląd historii powiadomień}
+\begin{itemize}
+    \item \textbf{Given} klient otrzymał wcześniejsze powiadomienia
+    \item \textbf{When} otwiera sekcję powiadomień
+    \item \textbf{Then} system wyświetla listę wszystkich istotnych komunikatów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę widzieć harmonogram moich zajęć, aby wiedzieć kiedy prowadzę zajęcia.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do swojego harmonogramu.
+    \item System pobiera zajęcia przypisane do instruktora.
+    \item System wyświetla listę zajęć z podziałem na dni i godziny.
+    \item Instruktor może podejrzeć szczegóły zajęć (tor, liczba uczestników).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia harmonogramu nie powinien przekraczać 5 sekund.
+    \item System wyświetla wyłącznie zajęcia przypisane do zalogowanego instruktora.
+    \item Dane harmonogramu są zgodne z aktualnym planem zajęć.
+    \item Interfejs harmonogramu jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie harmonogramu instruktora}
+\begin{itemize}
+    \item \textbf{Given} instruktor jest zalogowany do systemu
+    \item \textbf{When} przechodzi do swojego harmonogramu
+    \item \textbf{Then} system wyświetla jego zaplanowane zajęcia
+\end{itemize}
+
+\textbf{Scenariusz 2: Brak przypisanych zajęć}
+\begin{itemize}
+    \item \textbf{Given} instruktor nie ma przypisanych zajęć
+    \item \textbf{When} otwiera harmonogram
+    \item \textbf{Then} system wyświetla informację o braku zajęć
+\end{itemize}
+
+\textbf{Scenariusz 3: Aktualizacja harmonogramu}
+\begin{itemize}
+    \item \textbf{Given} harmonogram instruktora został zmieniony
+    \item \textbf{When} instruktor ponownie otwiera harmonogram
+    \item \textbf{Then} system wyświetla zaktualizowane dane
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę widzieć listę kursantów zapisanych na dane zajęcia i móc po kliknięciu zobaczyć informacje o kliencie, takie jak poziom zaawansowania, aby dostosować trening.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora i ma przypisane zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do swojego harmonogramu.
+    \item Instruktor wybiera konkretne zajęcia.
+    \item System wyświetla listę zapisanych kursantów.
+    \item Instruktor wybiera konkretnego klienta z listy.
+    \item System wyświetla szczegóły klienta (np. poziom zaawansowania, podstawowe informacje).
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Czas wyświetlenia listy kursantów i danych klienta nie powinien przekraczać 2 sekund.
+    \item Dostęp do danych klientów jest ograniczony wyłącznie do przypisanych instruktorów.
+    \item Dane są aktualne i zgodne z systemem zapisów.
+    \item Interfejs prezentacji listy kursantów i szczegółów klienta jest czytelny i intuicyjny.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wyświetlenie listy kursantów}
+\begin{itemize}
+    \item \textbf{Given} instruktor wybiera zajęcia
+    \item \textbf{When} otwiera listę uczestników
+    \item \textbf{Then} system wyświetla kursantów zapisanych na zajęcia
+\end{itemize}
+
+\textbf{Scenariusz 2: Wyświetlenie szczegółów klienta}
+\begin{itemize}
+    \item \textbf{Given} instruktor widzi listę kursantów
+    \item \textbf{When} wybiera konkretnego klienta
+    \item \textbf{Then} system wyświetla informacje o kliencie, w tym poziom zaawansowania
+\end{itemize}
+
+\textbf{Scenariusz 3: Brak kursantów na zajęciach}
+\begin{itemize}
+    \item \textbf{Given} na dane zajęcia nie zapisano żadnych klientów
+    \item \textbf{When} instruktor otwiera listę uczestników
+    \item \textbf{Then} system wyświetla informację o braku kursantów
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę być powiadamiany o zmianach w swoim grafiku, a także o nowych zajęciach i nowych kursantach, aby na bieżąco reagować na aktualizacje i odpowiednio przygotować się do prowadzenia zajęć.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora i ma przypisane zajęcia.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item System monitoruje zmiany w harmonogramie zajęć przypisanych do instruktora.
+    \item System wykrywa modyfikacje takie jak zmiana godziny, toru, daty lub listy uczestników.
+    \item System identyfikuje instruktora jako odbiorcę powiadomienia.
+    \item System generuje odpowiedni komunikat (zmiana grafiku, nowe zajęcia, nowi kursanci).
+    \item System wysyła powiadomienie w aplikacji oraz opcjonalnie e-mail.
+    \item Instruktor może otworzyć powiadomienie i przejść do szczegółów zajęć.
+    \item System archiwizuje wysłane powiadomienia w historii użytkownika.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund od wystąpienia zdarzenia.
+    \item Wiadomości e-mail są wysyłane w czasie do 5 minut.
+    \item System zapewnia niezawodne dostarczenie powiadomień do właściwego instruktora.
+    \item Powiadomienia są dostępne w historii przez minimum 30 dni.
+    \item Interfejs powiadomień jest czytelny i umożliwia szybkie przejście do szczegółów zajęć.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Powiadomienie o zmianie grafiku}
+\begin{itemize}
+    \item \textbf{Given} harmonogram instruktora został zmodyfikowany przez administratora
+    \item \textbf{When} system zapisuje zmiany w zajęciach
+    \item \textbf{Then} instruktor otrzymuje powiadomienie o zmianie terminu lub szczegółów zajęć
+\end{itemize}
+
+\textbf{Scenariusz 2: Powiadomienie o nowych zajęciach}
+\begin{itemize}
+    \item \textbf{Given} administrator przypisuje nowe zajęcia do instruktora
+    \item \textbf{When} zajęcia zostają zapisane w systemie
+    \item \textbf{Then} instruktor otrzymuje informację o nowych zajęciach wraz z ich szczegółami
+\end{itemize}
+
+\textbf{Scenariusz 3: Powiadomienie o nowych kursantach}
+\begin{itemize}
+    \item \textbf{Given} do zajęć zostali zapisani nowi kursanci
+    \item \textbf{When} system aktualizuje listę uczestników
+    \item \textbf{Then} instruktor otrzymuje powiadomienie o nowych zapisach wraz z liczbą uczestników
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako instruktor chcę móc komunikować się ze swoimi klientami przy użyciu czatu, aby móc odpowiedzieć na ich pytania.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę instruktora, a także ma przypisanych klientów do zajęć.
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Instruktor przechodzi do sekcji czatu.
+    \item System wyświetla listę dostępnych rozmów z klientami.
+    \item Instruktor wybiera konkretnego klienta.
+    \item System otwiera okno konwersacji.
+    \item Instruktor wysyła wiadomość do klienta.
+    \item System zapisuje wiadomość i dostarcza ją do klienta.
+    \item Klient może odpowiedzieć w ramach tej samej konwersacji.
+    \item System wyświetla historię rozmowy w chronologicznej kolejności.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Wiadomości są dostarczane w czasie rzeczywistym (do kilku sekund).
+    \item System zapewnia poufność i bezpieczeństwo komunikacji.
+    \item Historia czatu jest dostępna dla obu stron rozmowy.
+    \item Interfejs czatu jest czytelny i umożliwia łatwą wymianę wiadomości.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Wysłanie wiadomości do klienta}
+\begin{itemize}
+    \item \textbf{Given} instruktor otwiera czat z klientem
+    \item \textbf{When} wysyła wiadomość
+    \item \textbf{Then} klient otrzymuje wiadomość w czasie rzeczywistym
+\end{itemize}
+
+\textbf{Scenariusz 2: Odbiór odpowiedzi od klienta}
+\begin{itemize}
+    \item \textbf{Given} klient odpowiada w czacie
+    \item \textbf{When} wiadomość zostaje wysłana
+    \item \textbf{Then} instruktor widzi odpowiedź w konwersacji
+\end{itemize}
+
+\textbf{Scenariusz 3: Wyświetlenie historii rozmowy}
+\begin{itemize}
+    \item \textbf{Given} istnieje historia czatu
+    \item \textbf{When} instruktor otwiera konwersację
+    \item \textbf{Then} system wyświetla pełną historię wiadomości w kolejności chronologicznej
+\end{itemize}
+
+\vspace{0,5cm}
+
+\noindent \textbf{Historyjka:} Jako pracownik biura chcę otrzymywać powiadomienia o pytaniach klientów, aby móc szybko odpowiadać na ich zapytania.
+
+\vspace{0,2cm}
+
+\noindent \textbf{Kryteria funkcjonalne}
+
+\vspace{0,2cm}
+
+\noindent Warunki wstępne: Użytkownik jest zalogowany do systemu oraz posiada rolę pracownika biura (administratora).
+
+\vspace{0,2cm}
+
+\noindent Proces:
+
+\begin{itemize}
+    \item Klient wysyła pytanie poprzez system (np. czat lub formularz kontaktowy).
+    \item System rejestruje nowe zgłoszenie od klienta.
+    \item System identyfikuje pracownika biura jako odbiorcę powiadomienia.
+    \item System generuje powiadomienie o nowym pytaniu.
+    \item System wysyła powiadomienie w aplikacji oraz/lub e-mail.
+    \item Pracownik biura otrzymuje powiadomienie i może przejść do czatu z klientem.
+    \item System otwiera okno konwersacji z danym klientem.
+    \item Pracownik może odpowiedzieć na pytanie w ramach czatu.
+\end{itemize}
+
+\noindent \textbf{Kryteria niefunkcjonalne}
+\begin{itemize}
+    \item Powiadomienia systemowe są dostarczane w czasie do 5 sekund od wysłania pytania przez klienta.
+    \item Wiadomości e-mail są dostarczane w czasie do 5 minut.
+    \item System zapewnia przypisanie zgłoszeń do właściwego pracownika biura.
+    \item Historia zgłoszeń i czatu jest dostępna w systemie.
+    \item Interfejs czatu umożliwia szybkie przejście z powiadomienia do rozmowy.
+\end{itemize}
+
+\noindent \textbf{Scenariusze testowe}
+
+\textbf{Scenariusz 1: Otrzymanie powiadomienia o pytaniu klienta}
+\begin{itemize}
+    \item \textbf{Given} klient wysyła pytanie przez system
+    \item \textbf{When} system rejestruje zgłoszenie
+    \item \textbf{Then} pracownik biura otrzymuje powiadomienie
+\end{itemize}
+
+\textbf{Scenariusz 2: Przejście do czatu z klientem}
+\begin{itemize}
+    \item \textbf{Given} pracownik otrzymał powiadomienie o pytaniu
+    \item \textbf{When} klika w powiadomienie
+    \item \textbf{Then} system otwiera czat z odpowiednim klientem
+\end{itemize}
+
+\textbf{Scenariusz 3: Odpowiedź na pytanie}
+\begin{itemize}
+    \item \textbf{Given} otwarty jest czat z klientem
+    \item \textbf{When} pracownik wysyła odpowiedź
+    \item \textbf{Then} klient otrzymuje wiadomość w konwersacji
+\end{itemize}
+
+\section{Architektura logiczna projektu}
+ 
+Projekt \textit{System Zarządzania Szkołą Pływania ,,Delfinek''} oparty jest na trójwarstwowej architekturze klient--serwer. Centralnym elementem systemu jest serwer aplikacyjny zrealizowany w technologii \textbf{Java} z frameworkiem \textbf{Spring Boot}, komunikujący się z relacyjną bazą danych \textbf{PostgreSQL} za pośrednictwem warstwy persystencji \textbf{JPA/Hibernate}. Warstwa kliencka obejmuje aplikację webową dostępną z poziomu przeglądarki oraz dedykowany panel administratora zintegrowany w tej samej aplikacji.
+ 
+\subsection{Warstwy systemu}
+ 
+System podzielony jest na trzy logiczne warstwy, zgodnie z klasycznym wzorcem architektury wielowarstwowej:
+ 
+\begin{enumerate}
+    \item \textbf{Warstwa prezentacji (frontend)} -- interfejs użytkownika dostępny w przeglądarce internetowej, skierowany do wszystkich ról: klientów szkoły, instruktorów oraz administratora (pracownika biura). Komunikuje się z backendem wyłącznie poprzez REST API.
+    \item \textbf{Warstwa logiki biznesowej (backend)} -- serwer aplikacyjny Spring Boot realizujący całą logikę domenową systemu, udostępniający REST API w formacie JSON, obsługujący uwierzytelnianie i autoryzację opartą na rolach (RBAC).
+    \item \textbf{Warstwa danych (baza danych)} -- relacyjna baza danych PostgreSQL przechowująca wszystkie dane systemu; dostęp realizowany przez JPA/Hibernate.
+\end{enumerate}
+ 
+\subsection{Warstwa prezentacji (frontend)}
+ 
+Aplikacja webowa stanowi jedyny interfejs użytkownika w bieżącym zakresie projektu. Dostępna jest z poziomu dowolnej przeglądarki internetowej bez konieczności instalacji.
+ 
+\begin{itemize}
+    \item \textbf{Technologia:} HTML5, CSS3, JavaScript z frameworkiem (np. React lub Vue.js).
+    \item \textbf{Komunikacja z backendem:} żądania HTTP(S) do REST API, wymiana danych w formacie JSON.
+    \item \textbf{Widoki dostosowane do roli:} po zalogowaniu aplikacja prezentuje interfejs odpowiedni dla danej roli -- klienta, instruktora lub administratora.
+    \item \textbf{Funkcjonalności widoku klienta:} przeglądanie harmonogramu dostępnych zajęć, zapisywanie się i wypisywanie z zajęć, podgląd własnego grafiku, przeglądanie powiadomień, czat z instruktorem lub administratorem.
+    \item \textbf{Funkcjonalności widoku instruktora:} podgląd własnego harmonogramu, lista kursantów przypisanych do zajęć, podgląd danych kursanta (poziom zaawansowania), czat z klientami.
+    \item \textbf{Funkcjonalności widoku administratora:} zarządzanie harmonogramem (tworzenie, edycja, usuwanie zajęć), przydzielanie instruktorów i torów, zarządzanie rolami użytkowników, wysyłanie komunikatów i powiadomień, zarządzanie remontami torów.
+\end{itemize}
+ 
+\subsection{Warstwa logiki biznesowej (backend)}
+ 
+Backend realizowany jest jako aplikacja \textbf{Spring Boot} (Java), działająca jako samodzielny serwer HTTP(S). Architektura wewnętrzna backendu opiera się na wzorcu warstwowym: kontrolery REST $\rightarrow$ serwisy $\rightarrow$ repozytoria.
+ 
+\begin{itemize}
+    \item \textbf{Technologia:} Java, Spring Boot, Spring Web MVC, Spring Security.
+    \item \textbf{REST API:} udostępnienie endpointów HTTP(S) z odpowiedziami w formacie JSON; wersjonowanie API (\texttt{/api/v1/...}).
+    \item \textbf{Uwierzytelnianie i autoryzacja:} mechanizm JWT (JSON Web Token) -- po zalogowaniu użytkownik otrzymuje token, który dołączany jest do każdego kolejnego żądania. Spring Security weryfikuje token i kontroluje dostęp na podstawie roli (RBAC): \texttt{KLIENT}, \texttt{INSTRUKTOR}, \texttt{ADMINISTRATOR}.
+    \item \textbf{Logika domenowa:} serwisy realizują kluczowe operacje systemu -- \texttt{HarmonogramSerwis}, \texttt{ZapisSerwis}, \texttt{UzytkownikSerwis}, \texttt{PowiadomienieSerwis}, \texttt{ChatSerwis}, \texttt{TorSerwis}, \texttt{MailSerwis}, \texttt{TokenSerwis}.
+    \item \textbf{Walidacja danych:} po stronie backendu z użyciem Bean Validation (adnotacje \texttt{@Valid}, \texttt{@NotNull} itd.).
+    \item \textbf{Powiadomienia e-mail:} wysyłka przez \texttt{JavaMailSender} (Spring Mail) -- potwierdzenia zapisów, alerty o zmianach harmonogramu, linki do resetu hasła.
+    \item \textbf{Obsługa błędów:} globalny handler wyjątków (\texttt{@ControllerAdvice}) zwracający ujednolicone odpowiedzi błędów w formacie JSON.
+\end{itemize}
+ 
+\subsection{Warstwa danych (baza danych)}
+ 
+\begin{itemize}
+    \item \textbf{Silnik:} \textbf{PostgreSQL} -- relacyjna baza danych obsługująca transakcje ACID, konieczne do zapewnienia spójności przy jednoczesnych operacjach (np. rywalizujące zapisy na ostatnie wolne miejsce w grupie).
+    \item \textbf{Dostęp z backendu:} \textbf{JPA/Hibernate} -- mapowanie obiektowo-relacyjne (ORM); repozytoria Spring Data JPA (\texttt{JpaRepository}) jako warstwa dostępu do danych.
+    \item \textbf{Migracje schematu:} zarządzane narzędziem Flyway lub Liquibase, zapewniającym kontrolę wersji schematu bazy.
+    \item \textbf{Zakres przechowywanych danych:}
+    \begin{itemize}
+        \item profile użytkowników (klienci, instruktorzy, administratorzy) wraz z hasłami w postaci skrótu (BCrypt),
+        \item definicje zajęć z przypisaniem instruktora, toru, typu i cykliczności,
+        \item harmonogramy zajęć i zapisy kursantów,
+        \item historia wiadomości czatu i konwersacji,
+        \item powiadomienia i ich status (przeczytane/nieprzeczytane),
+        \item dane torów basenowych wraz ze statusem (wolny, zajęty, remont).
+    \end{itemize}
+    \item \textbf{Integralność danych:} klucze obce, ograniczenia unikalności, transakcje -- zabezpieczenie przed podwójną rezerwacją toru lub instruktora w tym samym terminie.
+\end{itemize}
+ 
+\subsection{Bezpieczeństwo}
+ 
+\begin{itemize}
+    \item \textbf{Transport:} komunikacja wyłącznie przez HTTPS (TLS).
+    \item \textbf{Uwierzytelnianie:} JWT z określonym czasem ważności tokenu; mechanizm odświeżania tokenu (refresh token).
+    \item \textbf{Autoryzacja:} Spring Security + RBAC -- każdy endpoint chroniony odpowiednią rolą; użytkownik nie uzyska dostępu do zasobów innej roli.
+    \item \textbf{Hasła:} przechowywane wyłącznie jako skróty BCrypt; proces resetowania hasła oparty na jednorazowym tokenie z czasem ważności 15 minut, wysyłanym na adres e-mail.
+    \item \textbf{Walidacja wejścia:} dane wejściowe walidowane po stronie backendu niezależnie od frontendu.
+\end{itemize}
+ 
+\subsection{Aplikacja mobilna}
+ 
+Aplikacja mobilna nie jest objęta bieżącym zakresem projektu. Ze względu na architekturę opartą na REST API, wdrożenie dedykowanej aplikacji mobilnej (np. w technologii Flutter lub React Native) jest możliwe w przyszłości bez zmian po stronie backendu -- wystarczy podłączenie nowego klienta do istniejącego API.
+ 
+\subsection{Schemat architektury}
+ 
+Poniższy schemat przedstawia warstwową architekturę systemu oraz przepływ komunikacji między komponentami.
+ 
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    font=\small,
+    box/.style={
+        draw, rounded corners=4pt,
+        minimum width=3.8cm, minimum height=0.9cm,
+        align=center, fill=white
+    },
+    layerbox/.style={
+        draw, rounded corners=6pt,
+        inner sep=10pt,
+        fill=#1!8, draw=#1!60
+    },
+    arrow/.style={-Stealth, thick, draw=gray!70},
+    label/.style={font=\footnotesize\itshape, text=gray!80}
+]
+ 
+
+\node[box, fill=blue!10, draw=blue!50]  (web)   at (0, 0)
+    {\textbf{Przeglądarka}\\\footnotesize HTML5 / CSS3 / JS\\(React / Vue.js)};
+ 
+
+\node[label] at (3.5, 0.35) {HTTPS};
+\node[label] at (3.5,-0.35) {REST / JSON};
+\draw[arrow, <->] (web.east) -- ++(2.5,0) node[midway] {};
+ 
+
+\node[box, fill=green!10, draw=green!50, minimum width=4.2cm, minimum height=5.2cm]
+    (backend) at (6.3, 0) {};
+ 
+\node[font=\bfseries\small, above] at (backend.north) {Backend};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (ctrl)  at (6.3,  1.6) {\textbf{Kontrolery REST}\\\footnotesize Spring Web MVC};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (sec)   at (6.3,  0.4) {\textbf{Bezpieczeństwo}\\\footnotesize Spring Security + JWT};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (srv)   at (6.3, -0.8) {\textbf{Serwisy}\\\footnotesize logika biznesowa};
+ 
+\node[box, fill=green!15, draw=green!40, minimum width=3.6cm]
+    (repo)  at (6.3, -2.0) {\textbf{Repozytoria}\\\footnotesize Spring Data JPA};
+ 
+\draw[arrow] (ctrl) -- (sec);
+\draw[arrow] (sec)  -- (srv);
+\draw[arrow] (srv)  -- (repo);
+ 
+
+\node[label] at (9.9,  0.35) {JPA /};
+\node[label] at (9.9, -0.35) {Hibernate};
+\draw[arrow, <->] (backend.east) -- ++(2.0,0);
+ 
+
+\node[box, fill=orange!10, draw=orange!50, minimum width=3.4cm, minimum height=2.0cm]
+    (db) at (13.2, 0)
+    {\textbf{PostgreSQL}\\\footnotesize relacyjna\\baza danych};
+ 
+
+\node[box, fill=purple!10, draw=purple!40, minimum width=3.0cm]
+    (mail) at (6.3, -3.6)
+    {\textbf{Serwer SMTP}\\\footnotesize JavaMailSender\\(powiadomienia e-mail)};
+ 
+\draw[arrow] (srv.south) -- ++(0,-0.55) -| (mail.north);
+ 
+\node[label, rotate=90] at (-2.2, 0)    {Warstwa prezentacji};
+\node[label, rotate=90] at (4.0,  0)    {Warstwa logiki biznesowej};
+\node[label, rotate=90] at (11.6, 0)    {Warstwa danych};
+ 
+\end{tikzpicture}
+\caption{Schemat architektury systemu Delfinek}
+\label{fig:architektura}
+\end{figure}
+ 
+\noindent Wszystkie żądania użytkowników trafiają do kontrolerów REST, gdzie Spring Security weryfikuje token JWT i rolę użytkownika. Po pozytywnej autoryzacji żądanie przekazywane jest do odpowiedniego serwisu, który realizuje logikę biznesową i za pośrednictwem repozytoriów JPA odczytuje lub zapisuje dane w PostgreSQL. Odpowiedź wraca tą samą ścieżką w formacie JSON. Zdarzenia wymagające powiadomień e-mail (potwierdzenia zapisów, alerty o zmianach, reset hasła) obsługiwane są asynchronicznie przez \texttt{MailSerwis} z użyciem \texttt{JavaMailSender}.
+ 
+\subsection{Stos technologiczny -- podsumowanie}
+ 
+\begin{table}[H]
+\centering
+\begin{tabular}{>{\bfseries}p{3.8cm} p{4.5cm} p{5.5cm}}
+\toprule
+Obszar & Technologia & Rola w systemie \\
+\midrule
+Język backendowy   & Java (JDK 25)         & Implementacja logiki biznesowej \\
+Framework backend  & Spring Boot            & Serwer HTTP, IoC, konfiguracja \\
+REST API           & Spring Web MVC         & Endpointy HTTP, serializacja JSON \\
+Bezpieczeństwo     & Spring Security + JWT  & Uwierzytelnianie, autoryzacja RBAC \\
+ORM                & JPA / Hibernate        & Mapowanie obiektowo-relacyjne \\
+Baza danych        & PostgreSQL             & Persystencja danych, transakcje ACID \\
+Migracje schematu  & Flyway / Liquibase     & Wersjonowanie schematu bazy \\
+E-mail             & Spring Mail (SMTP)     & Powiadomienia, reset hasła \\
+Frontend           & HTML5/CSS3/JS          & Interfejs użytkownika w przeglądarce \\
+\bottomrule
+\end{tabular}
+\caption{Stos technologiczny systemu Delfinek}
+\label{tab:stack}
+\end{table}
+
+
+\section{Diagramy aktywności}
+Poniżej przedstawiono pełen zestaw diagramów aktywności opisujących kluczowe procesy
+w systemie Delfinek: logowanie, komunikację (czat), powiadomienia, przeglądanie harmonogramu
+oraz zapisy na zajęcia. W repozytorium na githubie, do którego link podano na pierwszej stronie dokumentu, można pobrać załączone pliki png przedstawiające diagramy aktywności.
+
+
+% --- Logowanie ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{logowanie.png}
+  \caption{Logowanie i odzyskiwanie hasła}
+  \label{fig:logowanie}
+\end{figure}
+
+% --- Chat ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{chat.png}
+  \caption{Czat}
+  \label{fig:chat}
+\end{figure}
+
+% --- Powiadomienie ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{powiadomienie.png}
+  \caption{Powiadomienia}
+  \label{fig:powiadomienie}
+\end{figure}
+
+% --- Harmonogram ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{harmonogram.png}
+  \caption{Przeglądanie harmonogramu}
+  \label{fig:harmonogram}
+\end{figure}
+
+% --- Zapis na zajęcia ---
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth,height=1\textheight,keepaspectratio]{zapis.png}
+  \caption{Zapis na zajęcia}
+  \label{fig:zapis}
+\end{figure}
+
+\section{Prototyp UI}
+
+Utworzono lo-fi prototyp interfejsu użytkownika w programie Moqups. Link do pobrania pliku pdf tego interfejsu, można znaleźć na githubie, do którego link umieszczono na pierwszej stronie dokumentu.
+
+\section{Diagramy klas i sekwencji}
+
+Sporządzono diagram klas dla architektury, a także odpowiednie diagramy sekwencji dla implementowanych w przyszłości funkcjonalności. Ze względu na ich nieczytelnośc, nie umieszczono ich w tym dokumencie, pliki .puml oraz .png z diagramami są załączane w repozytorium githubowym.
+
+\section{Raport z badań interfejsu użytkownika}
+
+\noindent\textbf{Projekt:} Delfinek --- System zarządzania szkołą pływania\\
+\textbf{Zespół:} Łukasz Deja, Natalia Parszywka, Miłosz Błaszczyk\\
+\textbf{Data badania:} Maj 2026\\
+\textbf{Wersja dokumentu:} 1.1
+ 
+\subsection{Cel i zakres badania}
+ 
+Celem badania było zweryfikowanie użyteczności prototypu lo-fi interfejsu użytkownika systemu Delfinek przed wejściem w fazę implementacji. Badanie miało sprawdzić:
+ 
+\begin{itemize}
+    \item Czy nawigacja po systemie jest intuicyjna dla wszystkich grup użytkowników?
+    \item Czy proces zapisu na zajęcia jest zrozumiały i bezproblemowy?
+    \item Czy ekran logowania i rejestracji jest czytelny?
+    \item Jakie problemy napotykają użytkownicy przy pierwszym kontakcie z systemem?
+\end{itemize}
+ 
+\subsection{Metodologia}
+ 
+Badanie przeprowadziliśmy sami, metodą moderowanych testów użyteczności. Pokazaliśmy interaktywny prototyp wykonany w programie Moqups \textbf{5 osobom (studentom)}.
+ 
+Uczestnicy dostali do wykonania proste zadania:
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako klient:}
+\begin{enumerate}
+    \item Utworzenie konta i zalogowanie się
+    \item Wyszukanie dostępnych zajęć w nadchodzącym tygodniu
+    \item Zapisanie się na wybrane zajęcia
+    \item Sprawdzenie szczegółów zajęć (instruktor, tor, godzina)
+    \item Anulowanie zapisu na zajęcia
+    \item Skontaktowanie się z instruktorem przez czat
+\end{enumerate}
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako instruktor:}
+\begin{enumerate}
+    \item Zalogowanie się i przejrzenie grafiku
+    \item Wysłanie prośby o usunięcie istniejących zajęć
+    \item Przejrzenie i edytowanie informacji o kliencie
+    \item Zmiana hasła
+\end{enumerate}
+ 
+\vspace{0.3cm}
+\noindent\textbf{Zadania jako pracownik biura:}
+\begin{enumerate}
+    \item Dodanie nowych zajęć do harmonogramu
+    \item Sprawdzenie dostępności torów
+    \item Dodanie nowych zajęć
+    \item Sprawdzenie szczegółów zajęć
+    \item Nadanie/Zmiana roli użytkownika systemu
+\end{enumerate}
+ 
+\subsection{Główne problemy i zaobserwowane błędy}
+ 
+Podczas sesji wyłapaliśmy kilka kluczowych problemów w interfejsie. Część z nich została otwarcie wskazana przez samych użytkowników, natomiast inne błędy (głównie projektowe i procesowe) zauważyliśmy my (twórcy) na podstawie obserwacji zachowania testerów.
+ 
+\subsubsection*{Problemy krytyczne (do natychmiastowej poprawy)}
+ 
+\begin{itemize}
+    \item \textbf{Brak potwierdzenia zapisu:} Po kliknięciu ,,Zapisz się'' na ekranie nic się nie pojawia. Uczestnik 4 klikał przycisk kilka razy, bo nie wiedział, czy system zadziałał.
+ 
+    \item \textbf{Brak potwierdzenia dodania zajęć przez admina:} Uczestnik 1 zauważył, że po zatwierdzeniu formularza przez administratora i dodaniu nowej lekcji do grafiku, system nie wyświetla żadnego komunikatu potwierdzającego sukces. Użytkownik nie wie, czy operacja się powiodła bez ręcznego sprawdzania kalendarza. Dodatkowo zauważono, że przy dodawaniu cyklicznych zajęć powinna być dodana informacja o pominiętych terminach ze względu na dni wolne od pracy (świąteczne).
+ 
+    \item \textbf{Brak informacji o godzinach zajęć w widoku torów dla pracownika biura:} Uczestnik 3 zauważył, że zajęcia były prezentowane bez wskazania czasu ich trwania, co mogło prowadzić do niejasności dotyczących harmonogramu. Dodano informację o godzinach zajęć.
+\end{itemize}
+ 
+\subsubsection*{Mniejsze błędy i niedogodności}
+ 
+\begin{itemize}
+    \item \textbf{Brak dostępu do opisu instruktora:} Podczas gdy w aktualnej wersji systemu klienci mogą już bez problemu zobaczyć opis instruktora przy logowaniu się na zajęcia (co było niemożliwe we wcześniejszej wersji), klient nie miał możliwości sprawdzenia informacji o instruktorze, do którego chciał się zapisać na zajęcia.
+ 
+    \item \textbf{Brak możliwości napisania do kursanta:} Przy przeglądaniu informacji o kliencie z perspektywy instruktora uczestnik 3 zauważył, że brakuje przydatnej funkcji napisania do swojego kursanta, bez konieczności wybierania z listy wszystkich użytkowników systemu.
+ 
+    \item \textbf{Brak informacji o cyklicznej rezygnacji z zajęć:} (zauważone przez twórców) Podczas usuwania lub anulowania uczestnictwa w zajęciach dostępna jest opcja cyklicznej rezygnacji. Interfejs nie informuje jednak, których konkretnie terminów dotyczy ta operacja. Aby sprawdzić, z jakich zajęć użytkownik rezygnuje, konieczne jest samodzielne przejrzenie harmonogramu.
+\end{itemize}
+ 
+\subsection{Podsumowanie spostrzeżeń uczestników}
+ 
+Użytkownicy bez większych problemów wykonywali większość zadań i uznali podstawową nawigację systemu za intuicyjną. Podczas testów użytkownicy zwrócili jednak uwagę na niedociągnięcia w obecnym projekcie:
+ 
+\begin{itemize}
+    \item Najczęściej zgłaszanym problemem był brak jasnej informacji zwrotnej po wykonaniu operacji (np. zapis na zajęcia, dodanie zajęć).
+    \item Użytkownicy oczekiwali większej przejrzystości i dostępności informacji kontekstowych (np. opis instruktora, godziny zajęć).
+    \item Problemy wynikały głównie z braku komunikatów systemowych, a nie z samej struktury interfejsu.
+    \item Pomimo uwag, ogólny odbiór prototypu był pozytywny.
+\end{itemize}
+ 
+\subsection{Rekomendacje zmian}
+ 
+Na podstawie uwag użytkowników oraz naszych własnych obserwacji wprowadzono następujące poprawki do prototypu:
+ 
+\begin{itemize}
+    \item Dodanie komunikatów potwierdzających wykonanie kluczowych operacji, takich jak zapis na zajęcia, anulowanie uczestnictwa czy dodanie nowych zajęć do harmonogramu.
+    \item Rozszerzenie informacji dostępnych dla klientów poprzez umożliwienie podglądu opisu instruktora przed zapisaniem się na zajęcia.
+    \item Uzupełnienie widoku torów o godziny rozpoczęcia i zakończenia zajęć w celu zwiększenia czytelności harmonogramu.
+    \item Dodanie możliwości szybkiego kontaktu instruktora z kursantem bez konieczności wyszukiwania go na liście wszystkich użytkowników.
+    \item Wyświetlanie informacji o terminach objętych cykliczną rezygnacją z zajęć przed zatwierdzeniem operacji.
+    \item Dodanie informacji o dodawanych terminach przez administratora jak i pominiętych podczas tworzenia harmonogramów cyklicznych obejmujących dni wolne od pracy i święta.
+\end{itemize}
+ 
+\subsection{Wnioski}
+ 
+Przeprowadzone badanie z udziałem 5 użytkowników dostarczyło kluczowych wniosków, które pozwoliły zoptymalizować system Delfinek przed etapem wdrożenia:
+ 
+\begin{itemize}
+    \item System w podstawowym zakresie okazał się intuicyjny i zrozumiały dla większości użytkowników, którzy bez większych trudności realizowali przygotowane scenariusze zadań.
+    \item Największym problemem był brak informacji zwrotnej po wykonaniu operacji, co prowadziło do niepewności użytkowników co do skuteczności wykonanych działań.
+    \item Istotne braki dotyczyły również dostępności informacji kontekstowych, takich jak szczegóły dotyczące instruktora, godziny zajęć czy zakres wykonywanych operacji, co utrudniało podejmowanie decyzji w systemie.
+    \item Pomimo wskazanych niedociągnięć, ogólny odbiór prototypu był pozytywny, a struktura systemu została oceniona jako przejrzysta.
+\end{itemize}
+
+
+\end{document}
