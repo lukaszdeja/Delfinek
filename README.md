@@ -7,6 +7,7 @@ Skład zespołu projektowego:
 2. Natalia Parszywka
 3. Miłosz Błaszczyk
 
+Tablica kanbanowa projektu (Trello) : https://trello.com/b/H3ZY2HrB/projekt-delfinek
 
 Temat projektu - System służący do zarządzania szkołą pływania.
 
