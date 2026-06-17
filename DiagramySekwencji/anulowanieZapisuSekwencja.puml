@@ -7,10 +7,10 @@ skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
 actor Klient as K
-participant "Aplikacja\nwebowa" as UI
-participant "ZapisController" as CTRL
-participant "ZapisSerwis" as ZS
-participant "PowiadomienieSerwis" as PS
+participant "Aplikacja\nwebowa" as UI <<boundary>>
+participant "ZapisController" as CTRL <<control>>
+participant "ZapisSerwis" as ZS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych" as DB
 
 K -> UI : Klika "Anuluj zajęcia"\ni potwierdza w dialogu\n("Czy anulować cyklicznie?")
@@ -40,7 +40,6 @@ ZS --> CTRL : void
 deactivate ZS
 
 CTRL --> UI : HTTP 204 No Content
-UI --> K : "Zapis anulowany. Miejsce\nzostało zwolnione."
 deactivate CTRL
 deactivate UI
 

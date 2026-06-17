@@ -9,13 +9,13 @@ skinparam noteBackgroundColor #E1F5EE
 skinparam noteBorderColor #0F6E56
 
 actor Klient as K
-participant "Aplikacja\nwebowa" as UI
-participant "ZapisController\n(REST API)" as CTRL
-participant "ZapisSerwis" as ZS
-participant "HarmonogramSerwis" as HS
-participant "PowiadomienieSerwis" as PS
+participant "Aplikacja\nwebowa" as UI <<boundary>>
+participant "ZapisController\n(REST API)" as CTRL <<control>>
+participant "ZapisSerwis" as ZS <<control>>
+participant "HarmonogramSerwis" as HS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych\n(SQL)" as DB
-participant "MailSerwis" as MAIL
+participant "MailSerwis" as MAIL <<control>>
 
 K -> UI : Wybiera dostępny termin\ni klika "Zapisz się"
 activate UI
@@ -37,7 +37,6 @@ ZS -> ZS : sprawdzCzyPelne(zajecia)
 alt zajecia.isPelne() == true
     ZS --> CTRL : BusinessException("Brak wolnych miejsc")
     CTRL --> UI : HTTP 409 Conflict\n{"error": "Brak wolnych miejsc"}
-    UI --> K : Komunikat: "Brak wolnych miejsc"
 else jest wolne miejsce
     ZS -> DB : INSERT INTO zapisy\n(klientId, zajeciaId, status=AKTYWNY)
     activate DB
@@ -59,7 +58,6 @@ else jest wolne miejsce
     deactivate ZS
 
     CTRL --> UI : HTTP 201 Created\n{zapisId, zajecia, dataCzas}
-    UI --> K : Powiadomienie push:\n"Zapisano na zajęcia ✓"
 end
 
 deactivate CTRL

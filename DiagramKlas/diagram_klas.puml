@@ -52,6 +52,7 @@ package "Użytkownicy" as P1 {
         + zobaczDaneKursanta(klient: Klient) : Klient
         + edytujNotatkeKursanta(klient: Klient, notatka: String) : void
         + zasugerujUsunieciZajec(zajecia: Zajecia, powod: String) : void
+        +edytujSwojOpis(nowyOpis : String) : void
     }
 
     class Administrator {

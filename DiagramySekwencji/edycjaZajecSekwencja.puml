@@ -7,12 +7,12 @@ skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
 actor Administrator as A
-participant "Panel\nadministratora - aplikacja webowa" as UI
-participant "HarmonogramController" as CTRL
-participant "HarmonogramSerwis" as HS
-participant "ZapisSerwis" as ZS
-participant "PowiadomienieSerwis" as PS
-participant "MailSerwis" as MAIL
+participant "Panel\nadministratora - aplikacja webowa" as UI <<boundary>>
+participant "HarmonogramController" as CTRL <<control>>
+participant "HarmonogramSerwis" as HS <<control>>
+participant "ZapisSerwis" as ZS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
+participant "MailSerwis" as MAIL <<control>>
 database "Baza danych" as DB
 
 A -> UI : Wybiera zajęcia, klika\n"Edytuj", modyfikuje dane
@@ -30,7 +30,6 @@ note right : Tak samo jak przy dodawaniu\n– sprawdzany tor i instruktor
 alt konflikt
     HS --> CTRL : ConflictException
     CTRL --> UI : HTTP 409
-    UI --> A : "Konflikt terminu"
 else brak konfliktu
     HS -> DB : UPDATE zajecia SET ...\nWHERE id = zajeciaId
     DB --> HS : Zajecia (zaktualizowane)
@@ -57,7 +56,6 @@ else brak konfliktu
     deactivate HS
 
     CTRL --> UI : HTTP 200 OK {zajecia}
-    UI --> A : "Zmiany zapisane.\nUżytkownicy zostali powiadomieni."
 end
 
 deactivate CTRL

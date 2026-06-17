@@ -7,9 +7,9 @@ skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
 actor Administrator as A
-participant "Panel\nadministratora - aplikacja webowa" as UI
-participant "UzytkownikController" as CTRL
-participant "UzytkownikSerwis" as US
+participant "Panel\nadministratora - aplikacja webowa" as UI <<boundary>>
+participant "UzytkownikController" as CTRL <<control>>
+participant "UzytkownikSerwis" as US <<control>>
 database "Baza danych" as DB
 
 A -> UI : Przechodzi do "Role użytkowników",\nwybiera użytkownika, wybiera rolę\n(np. Instruktor), klika "Zapisz"
@@ -31,7 +31,6 @@ US --> CTRL : Uzytkownik (zaktualizowany)
 deactivate US
 
 CTRL --> UI : HTTP 200 OK {uzytkownik}
-UI --> A : "Rola zmieniona.\nNastępne logowanie użytkownika\nbędzie z nowymi uprawnieniami."
 
 deactivate CTRL
 deactivate UI

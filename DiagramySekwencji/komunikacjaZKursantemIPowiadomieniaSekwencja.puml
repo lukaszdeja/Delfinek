@@ -10,12 +10,12 @@ skinparam noteBackgroundColor #E1F5EE
 skinparam noteBorderColor #0F6E56
 
 actor Instruktor as I
-participant "Aplikacja\nwebowa" as UI
-participant "ChatController\n(REST API)" as CHAT_CTRL
-participant "ChatSerwis" as CS
-participant "PowiadomienieSerwis" as PS
+participant "Aplikacja\nwebowa" as UI <<boundary>>
+participant "ChatController\n(REST API)" as CHAT_CTRL <<control>>
+participant "ChatSerwis" as CS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych\n(SQL)" as DB
-participant "MailSerwis" as MAIL
+participant "MailSerwis" as MAIL <<control>>
 actor Administrator as A
 
 I -> UI : Otwiera zakładkę "Wiadomości"\ni wybiera kursanta z listy
@@ -44,7 +44,6 @@ deactivate CS
 CHAT_CTRL --> UI : HTTP 200 OK\n{konwersacjaId, wiadomosci: [...]}
 deactivate CHAT_CTRL
 
-UI --> I : Wyświetla okno czatu\nz historią wiadomości
 
 I -> UI : Wpisuje treść wiadomości\ni klika "Wyślij"
 UI -> CHAT_CTRL : POST /api/czat/wiadomosc\n{konwersacjaId, nadawcaId, tresc}
@@ -71,13 +70,11 @@ deactivate CS
 CHAT_CTRL --> UI : HTTP 201 Created\n{wiadomoscId, dataCzas}
 deactivate CHAT_CTRL
 
-UI --> I : Wiadomość widoczna\nze statusem ✓
 
 note over A, DB : Niezależny przepływ –\nAdministrator modyfikuje zajęcia instruktora
 
 A -> DB : UPDATE zajecia\nSET dataGodzina = :nowaData\nWHERE id = :zajeciaId
 
-DB --> A : ok
 
 A -> PS : powiadomOZmianieHarmonogramu(zajecia)
 activate PS
@@ -91,10 +88,8 @@ note right of MAIL : Email wysyłany\nasynchronicznie;\nmax 5 min
 MAIL --> PS : ok
 deactivate MAIL
 
-PS --> A : void
 deactivate PS
 
-UI --> I : Powiadomienie push:\n"Zmiana w harmonogramie !"
 deactivate UI
 
 @enduml

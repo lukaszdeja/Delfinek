@@ -9,11 +9,11 @@ skinparam noteBackgroundColor #E1F5EE
 skinparam noteBorderColor #0F6E56
 
 actor Administrator as A
-participant "Panel\nadministratora - aplikacja webowa" as UI
-participant "HarmonogramController" as CTRL
-participant "HarmonogramSerwis" as HS
-participant "TorSerwis" as TS
-participant "PowiadomienieSerwis" as PS
+participant "Panel\nadministratora - aplikacja webowa" as UI <<boundary>>
+participant "HarmonogramController" as CTRL <<control>>
+participant "HarmonogramSerwis" as HS <<control>>
+participant "TorSerwis" as TS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych" as DB
 
 A -> UI : Wypełnia formularz\n"Nowe zajęcia"\n(data, godzina, typ,\ninstruktor, tor,\ncykliczność, max. miejsc)
@@ -29,7 +29,6 @@ HS -> HS : walidujDTO(dto)
 alt dto niepoprawne (brak wymaganych pól)
     HS --> CTRL : ValidationException
     CTRL --> UI : HTTP 422 Unprocessable Entity\n{"errors": [...]}
-    UI --> A : Komunikaty walidacyjne\nna formularzu
 else dto poprawne
 
     HS -> TS : sprawdzDostepnosc(torId, dataGodzina)
@@ -45,7 +44,6 @@ else dto poprawne
     alt konflikt toru lub instruktora
         HS --> CTRL : ConflictException("Konflikt: tor/instruktor zajęty")
         CTRL --> UI : HTTP 409 Conflict\n{"error": "Konflikt terminu"}
-        UI --> A : "Wybrany tor lub instruktor\njest zajęty w tym terminie"
     else brak konfliktu
 
         HS -> DB : INSERT INTO zajecia (generuje\nwszystkie terminy dla cykliczności)
@@ -61,7 +59,6 @@ else dto poprawne
         deactivate HS
 
         CTRL --> UI : HTTP 201 Created\n{zajeciaIds, terminy, pominieteDniSwiateczne}
-        UI --> A : "Zajęcia dodane.\nTerminy: ...\nPominięto dni świąteczne: ..."
     end
 end
 

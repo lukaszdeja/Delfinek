@@ -10,10 +10,10 @@ skinparam noteBackgroundColor #E1F5EE
 skinparam noteBorderColor #0F6E56
 
 actor Instruktor as I
-participant "Aplikacja\nwebowa" as UI
-participant "HarmonogramController\n(REST API)" as CTRL
-participant "HarmonogramSerwis" as HS
-participant "ZapisSerwis" as ZS
+participant "Aplikacja\nwebowa" as UI <<boundary>>
+participant "HarmonogramController\n(REST API)" as CTRL <<control>>
+participant "HarmonogramSerwis" as HS <<control>>
+participant "ZapisSerwis" as ZS <<control>>
 database "Baza danych\n(SQL)" as DB
 
 I -> UI : Otwiera zakładkę\n"Mój grafik"
@@ -32,7 +32,6 @@ HS --> CTRL : List<Zajecia>
 deactivate HS
 
 CTRL --> UI : HTTP 200 OK\n{zajecia: [...]}
-UI --> I : Wyświetla harmonogram\ntygodniowy
 
 I -> UI : Klika w konkretne zajęcia
 UI -> CTRL : GET /api/zajecia/{zajeciaId}/kursanci
@@ -50,7 +49,6 @@ deactivate ZS
 CTRL --> UI : HTTP 200 OK\n{kursanci: [...]}
 deactivate CTRL
 
-UI --> I : Wyświetla listę kursantów\n(imię, poziom, notatki)
 
 I -> UI : Klika w konkretnego kursanta
 UI -> CTRL : GET /api/klienci/{klientId}
@@ -66,7 +64,6 @@ deactivate ZS
 CTRL --> UI : HTTP 200 OK\n{klient: {poziomPlywania,\nnotatkaInstruktora, ...}}
 deactivate CTRL
 
-UI --> I : Wyświetla szczegóły kursanta\n(poziom, notatka instruktora)
 
 I -> UI : Edytuje notatkę kursanta\ni klika "Zapisz"
 UI -> CTRL : PUT /api/klienci/{klientId}/notatka\n{notatka: "..."}
@@ -83,7 +80,6 @@ CTRL --> UI : HTTP 200 OK
 deactivate CTRL
 deactivate CTRL
 
-UI --> I : Komunikat: "Notatka zapisana ✓"
 deactivate UI
 
 @enduml

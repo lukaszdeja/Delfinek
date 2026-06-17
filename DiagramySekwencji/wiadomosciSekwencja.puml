@@ -7,10 +7,10 @@ skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
 actor Klient as K
-participant "Aplikacja\nwebowa" as UI
-participant "ChatController\n(WebSocket/REST)" as CTRL
-participant "ChatSerwis" as CS
-participant "PowiadomienieSerwis" as PS
+participant "Aplikacja\nwebowa" as UI <<boundary>>
+participant "ChatController\n(WebSocket/REST)" as CTRL <<control>>
+participant "ChatSerwis" as CS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych" as DB
 actor Instruktor as I
 
@@ -38,11 +38,9 @@ CS --> CTRL : Wiadomosc
 deactivate CS
 
 CTRL --> UI : HTTP 201 Created {wiadomoscId, dataCzas}
-UI --> K : Wiadomość pojawia się\nw oknie czatu
 
 note right of I : Instruktor w czasie rzeczywistym\n(WebSocket push) lub\nprzy otwarciu czatu
 
-CTRL -> I : WebSocket push: nowa wiadomość
 deactivate CTRL
 deactivate UI
 

@@ -1,97 +1,47 @@
-@startuml Delfinek_Sekwencja_Logowanie
-title Diagram sekwencji – Logowanie i odzyskiwanie hasła
+@startuml Delfinek_Sekwencja_UsuniecieZajec
+title Diagram sekwencji – Administrator usuwa zajęcia
 
 skinparam sequenceArrowThickness 1.5
 skinparam participantBorderColor #534AB7
 skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
-actor Uzytkownik as U
-participant "Strona\nlogowania" as UI
-participant "AuthController" as CTRL
-participant "UzytkownikSerwis" as US
-participant "TokenSerwis" as TS
-participant "MailSerwis" as MAIL
+actor Administrator as A
+participant "Panel\nadministratora - aplikacja webowa" as UI <<boundary>>
+participant "HarmonogramController" as CTRL <<control>>
+participant "HarmonogramSerwis" as HS <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
 database "Baza danych" as DB
 
-== Logowanie ==
-U -> UI : Wprowadza email i hasło,\nklika "Zaloguj się"
+A -> UI : Klika "Usuń zajęcia"\ni potwierdza dialog\n("Czy usunąć cyklicznie?")
 activate UI
 
-UI -> CTRL : POST /api/auth/login\n{email, haslo}
+UI -> CTRL : DELETE /api/zajecia/{zajeciaId}\n?cyklicznie=true
 activate CTRL
 
-CTRL -> US : zalogujSie(email, haslo)
-activate US
-US -> DB : SELECT uzytkownik\nWHERE email = ?
-DB --> US : Uzytkownik (lub null)
+CTRL -> HS : usunZajecia(zajeciaId, cyklicznie)
+activate HS
 
-alt użytkownik nie istnieje lub złe hasło
-    US --> CTRL : AuthException("Błędne dane")
-    CTRL --> UI : HTTP 401 Unauthorized
-    UI --> U : "Błędny email lub hasło"
-else dane poprawne
-    US -> US : weryfikujHaslo(haslo, hash)
-    US -> TS : wygenerujToken(userId, rola)
-    TS --> US : JWT token
-    US --> CTRL : {token, rola, userId}
-    deactivate US
-    CTRL --> UI : HTTP 200 OK\n{token, rola}
-    UI --> U : Przekierowanie do panelu\n(zgodnego z rolą)
-end
+HS -> DB : SELECT zajecia (+ przyszłe\nterminy jeśli cyklicznie=true)
+DB --> HS : List<Zajecia>
 
-deactivate CTRL
-deactivate UI
+HS -> DB : SELECT klienci zapisani\nna te zajecia
+DB --> HS : List<Klient>
 
-== Odzyskiwanie hasła ==
-U -> UI : Klika "Nie pamiętam hasła",\npodaje email
-activate UI
+HS -> DB : DELETE FROM zajecia\nWHERE id IN (...)
+DB --> HS : ok
 
-UI -> CTRL : POST /api/auth/reset-hasla\n{email}
-activate CTRL
+HS -> PS : wyslij(ANULOWANIE_ZAJEC,\n instruktor + klienci)
+activate PS
+PS -> DB : INSERT INTO powiadomienia (masowe)
+DB --> PS : ok
+deactivate PS
 
-CTRL -> US : resetujHaslo(email)
-activate US
-US -> DB : SELECT uzytkownik WHERE email = ?
-DB --> US : Uzytkownik (lub null)
+HS --> CTRL : void
+deactivate HS
 
-alt email nie istnieje
-    US --> CTRL : "Nie znaleziono konta"
-    CTRL --> UI : HTTP 404
-    UI --> U : "Brak konta z tym adresem"
-else email istnieje
-    US -> US : generujKod6Cyfrowy()
-    US -> DB : UPDATE uzytkownik SET\nkodReset=?, kodWaznyDo=now+15min
-    DB --> US : ok
-    US -> MAIL : wyslijEmail(email,\n"Kod do resetu hasła: XXXXXX")
-    MAIL --> US : ok
-    US --> CTRL : void
-    deactivate US
-    CTRL --> UI : HTTP 200 OK
-    UI --> U : "Sprawdź skrzynkę.\nWprowadź 6-cyfrowy kod."
-end
+CTRL --> UI : HTTP 204 No Content
 
-deactivate CTRL
-
-U -> UI : Wpisuje kod + nowe hasło,\nklika "Ustaw"
-activate CTRL
-UI -> CTRL : POST /api/auth/potwierdz-reset\n{email, kod, noweHaslo}
-CTRL -> US : zmienHasloPoReset(email, kod, noweHaslo)
-activate US
-US -> DB : SELECT uzytkownik\nWHERE email=? AND kodReset=?\nAND kodWaznyDo > now()
-DB --> US : Uzytkownik (lub null)
-alt kod nieważny / wygasł
-    US --> CTRL : AuthException
-    CTRL --> UI : HTTP 400
-    UI --> U : "Kod nieprawidłowy lub wygasł"
-else kod poprawny
-    US -> DB : UPDATE uzytkownik\nSET haslo=hash(noweHaslo),\nkodReset=null
-    DB --> US : ok
-    US --> CTRL : void
-    deactivate US
-    CTRL --> UI : HTTP 200 OK
-    UI --> U : "Hasło zmienione. Możesz się zalogować."
-end
 deactivate CTRL
 deactivate UI
 

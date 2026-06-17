@@ -7,10 +7,10 @@ skinparam participantBackgroundColor #EEEDFE
 skinparam sequenceLifeLineBorderColor #534AB7
 
 actor Administrator as A
-participant "Panel\nadministratora - aplikacja webowa" as UI
-participant "PowiadomienieController" as CTRL
-participant "PowiadomienieSerwis" as PS
-participant "MailSerwis" as MAIL
+participant "Panel\nadministratora - aplikacja webowa" as UI <<boundary>>
+participant "PowiadomienieController" as CTRL <<control>>
+participant "PowiadomienieSerwis" as PS <<control>>
+participant "MailSerwis" as MAIL <<control>>
 database "Baza danych" as DB
 
 A -> UI : Klika "Wyślij komunikat",\nwpisuje treść, wybiera\nodbiorcow (klienci / instruktorzy /\nwszyscy), klika "Wyślij"
@@ -25,7 +25,6 @@ activate PS
 alt tresc jest pusta
     PS --> CTRL : ValidationException
     CTRL --> UI : HTTP 422
-    UI --> A : "Treść komunikatu nie może być pusta"
 else tresc niepusta
     PS -> DB : SELECT uzytkownicy\nWHERE rola IN (grupaOdbiorcow)
     DB --> PS : List<Uzytkownik>
@@ -41,7 +40,6 @@ else tresc niepusta
     deactivate PS
 
     CTRL --> UI : HTTP 200 OK\n{wyslanoPowiadomien: N}
-    UI --> A : "Komunikat wysłany do N użytkowników"
 end
 
 deactivate CTRL
