@@ -1,6 +1,7 @@
 package pl.delfinek;
 
 import pl.delfinek.dto.RegistrationDTO;
+import pl.delfinek.dto.ZajeciaDTO;
 import pl.delfinek.model.*;
 import pl.delfinek.model.enums.*;
 import pl.delfinek.repository.*;
@@ -31,6 +32,9 @@ public class Main {
         TorSerwis torSerwis = new TorSerwisImpl(torRepository, zajeciaRepository);
         UzytkownikSerwis uzytkownikSerwis = new UzytkownikSerwisImpl(uzytkownikRepository, mailSerwis);
         ZapisSerwis zapisSerwis = new ZapisSerwisImpl(zapisRepository, zajeciaRepository, uzytkownikRepository, powiadomienieSerwis);
+        HarmonogramSerwis harmonogramSerwis = new HarmonogramSerwisImpl(
+                zajeciaRepository, zapisRepository, torRepository, uzytkownikRepository, torSerwis, powiadomienieSerwis);
+
 
         System.out.println("--- 1. Inicjalizacja danych podstawowych ---");
 
@@ -63,6 +67,65 @@ public class Main {
 
         System.out.println("Zarejestrowano klienta: " + klient1);
         System.out.println("Zarejestrowano klienta: " + klient2);
+
+        System.out.println();
+
+        System.out.println("--- 3. Dodanie zajęć cyklicznych ---");
+
+        ZajeciaDTO dto = new ZajeciaDTO(
+                LocalDateTime.of(2026, Month.JULY, 6, 16, 0),
+                45, TypZajec.DZIECI_GR_A, instruktor.getId(), tor1.getId(),
+                6, "Grupa dla dzieci 8-10 lat", Cyklicznosc.CO_TYDZIEN,
+                LocalDate.of(2026, Month.JULY, 27));
+
+        List<Zajecia> wygenerowaneZajecia = harmonogramSerwis.dodajZajecia(dto);
+        System.out.println("Wygenerowano " + wygenerowaneZajecia.size() + " terminów zajęć (co tydzień):");
+        wygenerowaneZajecia.forEach(z -> System.out.println("  -> " + z));
+
+        System.out.println();
+        System.out.println("--- 4. Próba dodania kolidujących zajęć na tym samym torze (oczekiwany ConflictException) ---");
+        try {
+            ZajeciaDTO kolidujace = new ZajeciaDTO(
+                    LocalDateTime.of(2026, Month.JULY, 6, 16, 20),
+                    30, TypZajec.DOROSLI_PODSTAWOWY, null, tor1.getId(), 4, null,
+                    Cyklicznosc.JEDNORAZOWE, null);
+            harmonogramSerwis.dodajZajecia(kolidujace);
+        } catch (Exception e) {
+            System.out.println("Złapano wyjątek: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+        }
+
+        System.out.println();
+        System.out.println("--- 5. Zapis klientów na pierwsze zajęcia ---");
+
+        Zajecia pierwszeZajecia = wygenerowaneZajecia.get(0);
+        Zapis zapis1 = zapisSerwis.zapisz(klient1.getId(), pierwszeZajecia.getId());
+        Zapis zapis2 = zapisSerwis.zapisz(klient2.getId(), pierwszeZajecia.getId());
+
+        System.out.println("Zapis 1: " + zapis1);
+        System.out.println("Zapis 2: " + zapis2);
+        System.out.println("Wolne miejsca na zajęciach: " + pierwszeZajecia.getLiczbaMiejscWolnych()
+                + " / " + pierwszeZajecia.getMaxLiczbaMiejsc());
+
+        System.out.println();
+        System.out.println("--- 6. Anulowanie zapisu ---");
+        zapisSerwis.anuluj(zapis2.getId(), false);
+        System.out.println("Po anulowaniu zapisu klienta 2, wolne miejsca: "
+                + pierwszeZajecia.getLiczbaMiejscWolnych() + " / " + pierwszeZajecia.getMaxLiczbaMiejsc());
+
+        System.out.println();
+        System.out.println("--- 7. Edycja zajęć - zmiana godziny ---");
+        System.out.println("Zajęcia przed edycją: " + pierwszeZajecia);
+        ZajeciaDTO edycjaDto = new ZajeciaDTO(pierwszeZajecia.getDataGodzina().plusHours(1),
+                pierwszeZajecia.getCzasTrwaniaMin(), pierwszeZajecia.getTypZajec(),
+                instruktor.getId(), tor1.getId(), pierwszeZajecia.getMaxLiczbaMiejsc(),
+                "Zmiana godziny zajęć na prośbę instruktora o godzinę", pierwszeZajecia.getCyklicznosc(), pierwszeZajecia.getDataKonca());
+        Zajecia zedytowane = harmonogramSerwis.edytujZajecia(pierwszeZajecia.getId(), edycjaDto);
+        System.out.println("Zajęcia po edycji: " + zedytowane);
+
+        System.out.println();
+        System.out.println("--- 8. Powiadomienia klienta 1 po edycji ---");
+        klient1.pobierzPowiadomienia().forEach(p ->
+                System.out.println("  [" + p.getTyp() + "] " + p.getTresc()));
 
         System.out.println();
     }
