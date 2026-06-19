@@ -2,6 +2,7 @@ package pl.delfinek;
 
 import pl.delfinek.dto.RegistrationDTO;
 import pl.delfinek.dto.ZajeciaDTO;
+import pl.delfinek.exception.ValidationException;
 import pl.delfinek.model.*;
 import pl.delfinek.model.enums.*;
 import pl.delfinek.repository.*;
@@ -25,6 +26,7 @@ public class Main {
         ZapisRepository zapisRepository = new ZapisRepository();
         TorRepository torRepository = new TorRepository();
         PowiadomienieRepository powiadomienieRepository = new PowiadomienieRepository();
+        KonwersacjaRepository konwersacjaRepository = new KonwersacjaRepository();
 
         // Serwisy
         MailSerwis mailSerwis = new MailSerwisImpl();
@@ -34,6 +36,8 @@ public class Main {
         ZapisSerwis zapisSerwis = new ZapisSerwisImpl(zapisRepository, zajeciaRepository, uzytkownikRepository, powiadomienieSerwis);
         HarmonogramSerwis harmonogramSerwis = new HarmonogramSerwisImpl(
                 zajeciaRepository, zapisRepository, torRepository, uzytkownikRepository, torSerwis, powiadomienieSerwis);
+
+        ChatSerwis chatSerwis = new ChatSerwisImpl(konwersacjaRepository, uzytkownikRepository, powiadomienieSerwis);
 
 
         System.out.println("--- 1. Inicjalizacja danych podstawowych ---");
@@ -58,15 +62,24 @@ public class Main {
         System.out.println();
         System.out.println("--- 2. Rejestracja klientów ---");
 
+
         Klient klient1 = uzytkownikSerwis.rejestruj(new RegistrationDTO(
-                "Marta", "Wiśniewska", "marta@gmail.com", "haslo123",
+                "Marta", "Wiśniewska", "marta@gmail.com", "Haslo123!",
                 "123456789", LocalDate.of(2014, 3, 20)));
         Klient klient2 = uzytkownikSerwis.rejestruj(new RegistrationDTO(
-                "Jan", "Zieliński", "jan@gmail.com", "haslo456",
+                "Jan", "Zieliński", "jan@gmail.com", "Haslo456@",
                 "676767676", LocalDate.of(2012, 7, 9)));
 
         System.out.println("Zarejestrowano klienta: " + klient1);
         System.out.println("Zarejestrowano klienta: " + klient2);
+        try {
+            Klient klient3 = uzytkownikSerwis.rejestruj(new RegistrationDTO(
+                    "Wojciech", "Adamczyk", "wojtek@gmail.com", "ZleHaslo",
+                    "212121212", LocalDate.of(2010, 12, 24)));
+        } catch (ValidationException e) {
+            System.out.println("Nie udalo sie zarejestrowac uzytkownika:\n" + e.getMessage());
+        }
+
 
         System.out.println();
 
@@ -128,5 +141,38 @@ public class Main {
                 System.out.println("  [" + p.getTyp() + "] " + p.getTresc()));
 
         System.out.println();
+
+        System.out.println("--- 9. Czat instruktor <-> klient ---");
+        var konwersacja = chatSerwis.pobierzLubUtworzKonwersacje(instruktor.getId(), klient1.getId());
+        chatSerwis.wyslijWiadomosc(konwersacja.getId(), instruktor.getId(),
+                "Dzień dobry, przypominam o zmianie godziny zajęć.");
+        chatSerwis.wyslijWiadomosc(konwersacja.getId(), klient1.getId(), "Dziękuję za informację!");
+
+        System.out.println("Historia konwersacji:");
+        chatSerwis.pobierzHistorie(konwersacja.getId())
+                .forEach(w -> System.out.println("  " + w.getNadawca().getImie() + ": " + w.getTresc()));
+
+        System.out.println();
+        System.out.println("--- 10. Komunikat administratora do wszystkich klientów ---");
+        int liczbaOdbiorcow = powiadomienieSerwis.wyslijKomunikat(
+                "Basen będzie zamknięty w dniu 15.08 z powodu prac konserwacyjnych.", List.of(Rola.KLIENT));
+        System.out.println("Komunikat wysłano do " + liczbaOdbiorcow + " odbiorców.");
+
+        System.out.println();
+        System.out.println("--- 11. Remont toru ---");
+        torSerwis.zglosRemont(tor2.getId(), LocalDate.of(2026, 8, 1), LocalDate.of(2026, 8, 10));
+        System.out.println("Tor 2 status po zgłoszeniu remontu: " + tor2.getStatus());
+        torSerwis.zakonczRemont(tor2.getId());
+        System.out.println("Tor 2 status po zakończeniu remontu: " + tor2.getStatus());
+
+        System.out.println();
+        System.out.println("--- 12. Usunięcie zajęć cyklicznie ---");
+        int liczbaPrzedUsunieciem = zajeciaRepository.znajdzWszystkie().size();
+        harmonogramSerwis.usunZajecia(zedytowane.getId(), true);
+        int liczbaPoUsunieciu = zajeciaRepository.znajdzWszystkie().size();
+        System.out.println("Liczba zajęć przed usunięciem: " + liczbaPrzedUsunieciem + ", po usunięciu (cyklicznie=true): " + liczbaPoUsunieciu);
+
+        System.out.println();
+        System.out.println("--- Koniec testu ---");
     }
 }

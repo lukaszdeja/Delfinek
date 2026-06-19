@@ -106,10 +106,15 @@ public class UzytkownikSerwisImpl implements UzytkownikSerwis {
         if (dto.getEmail() == null || dto.getEmail().isBlank() || !dto.getEmail().contains("@")) {
             throw new ValidationException("Adres e-mail jest nieprawidłowy.");
         }
-
-        //narazie sprawdzamy tylko po dlugosci, trzeba dodac jakis regex
-        if (dto.getHaslo() == null || dto.getHaslo().length() < 6) {
-            throw new ValidationException("Hasło musi mieć co najmniej 6 znaków.");
+        if (dto.getNrTelefonu() == null || dto.getNrTelefonu().trim().length() != 9) {
+            throw new ValidationException("Numer telefonu powinien miec 9 cyfr");
         }
+        String passwordRegex = "^(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{6,}$";
+        if (dto.getHaslo() == null || !dto.getHaslo().matches(passwordRegex)) {
+            throw new ValidationException(
+                    "Hasło musi mieć co najmniej 6 znaków oraz zawierać przynajmniej jedną wielką literę, jedną cyfrę i jeden znak specjalny."
+            );
+        }
+
     }
 }
