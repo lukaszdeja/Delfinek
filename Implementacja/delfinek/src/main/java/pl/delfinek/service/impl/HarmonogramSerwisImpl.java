@@ -251,22 +251,23 @@ public class HarmonogramSerwisImpl implements HarmonogramSerwis {
         Cyklicznosc cyklicznosc = dto.getCyklicznosc() == null ? Cyklicznosc.JEDNORAZOWE : dto.getCyklicznosc();
 
         if (cyklicznosc == Cyklicznosc.JEDNORAZOWE || dto.getDataKonca() == null) {
-            wynik.add(zbudujZajecia(dto, dto.getDataGodzina(), tor, instruktor));
+            wynik.add(zbudujZajecia(dto, dto.getDataGodzina(), tor, instruktor, null));
             return wynik;
         }
 
+        String cyklId = java.util.UUID.randomUUID().toString();
         int krokDni = cyklicznosc == Cyklicznosc.CO_DWA_TYGODNIE ? 14 : 7;
         LocalDateTime aktualnyTermin = dto.getDataGodzina();
         LocalDate dataKonca = dto.getDataKonca();
 
         while (!aktualnyTermin.toLocalDate().isAfter(dataKonca)) {
-            wynik.add(zbudujZajecia(dto, aktualnyTermin, tor, instruktor));
+            wynik.add(zbudujZajecia(dto, aktualnyTermin, tor, instruktor, cyklId));
             aktualnyTermin = aktualnyTermin.plusDays(krokDni);
         }
         return wynik;
     }
 
-    private Zajecia zbudujZajecia(ZajeciaDTO dto, LocalDateTime termin, Tor tor, Instruktor instruktor) {
+    private Zajecia zbudujZajecia(ZajeciaDTO dto, LocalDateTime termin, Tor tor, Instruktor instruktor, String cyklId) {
         Zajecia zajecia = new Zajecia(
                 null, termin, dto.getCzasTrwaniaMin(), dto.getTypZajec(),
                 dto.getMaxLiczbaMiejsc(), dto.getCyklicznosc());
@@ -274,19 +275,24 @@ public class HarmonogramSerwisImpl implements HarmonogramSerwis {
         zajecia.setDataKonca(dto.getDataKonca());
         zajecia.setTor(tor);
         zajecia.setInstruktor(instruktor);
+        zajecia.setCyklId(cyklId);
         return zajecia;
     }
 
-    /** Znajduje przyszłe (względem teraz) wystąpienia tego samego cyklu zajęć - ten sam typ, instruktor, tor i dzień tygodnia/godzina. */
+    /**
+     * Znajduje przyszłe (względem teraz) wystąpienia tej samej serii cyklicznej -
+     * identyfikowane jednoznacznie przez cyklId, niezależnie od tego, czy dany
+     * termin został później przesunięty godzinowo przez edycję. Dla zajęć bez
+     * cyklId (JEDNORAZOWE) zwraca listę pustą - nie należą do żadnej serii.
+     */
     private List<Zajecia> znajdzPrzyszleWystapieniaCyklu(Zajecia zrodlowe) {
+        if (zrodlowe.getCyklId() == null) {
+            return List.of();
+        }
         LocalDateTime teraz = LocalDateTime.now();
         return zajeciaRepository.znajdzWszystkie().stream()
                 .filter(z -> !z.getId().equals(zrodlowe.getId()))
-                .filter(z -> z.getTypZajec() == zrodlowe.getTypZajec())
-                .filter(z -> z.getCyklicznosc() == zrodlowe.getCyklicznosc())
-                .filter(z -> java.util.Objects.equals(z.getInstruktor(), zrodlowe.getInstruktor()))
-                .filter(z -> java.util.Objects.equals(z.getTor(), zrodlowe.getTor()))
-                .filter(z -> z.getDataGodzina().toLocalTime().equals(zrodlowe.getDataGodzina().toLocalTime()))
+                .filter(z -> zrodlowe.getCyklId().equals(z.getCyklId()))
                 .filter(z -> z.getDataGodzina().isAfter(teraz))
                 .toList();
     }

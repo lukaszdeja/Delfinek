@@ -30,6 +30,7 @@ public class Zajecia {
 
     private Instruktor instruktor;
     private Tor tor;
+    private String cyklId;
 
     /** Aktywni i historyczni kursanci powiązani przez zapisy aktywne (widok pomocniczy). */
     private final List<Klient> uczestnicy = new ArrayList<>();
@@ -146,6 +147,10 @@ public class Zajecia {
     public void setMaxLiczbaMiejsc(int maxLiczbaMiejsc) {
         this.maxLiczbaMiejsc = maxLiczbaMiejsc;
     }
+
+    public String getCyklId() {return cyklId;}
+
+    public void setCyklId(String cyklId) {this.cyklId = cyklId;}
 
     public String getUwagi() {
         return uwagi;
