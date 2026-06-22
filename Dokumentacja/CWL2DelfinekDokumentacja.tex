@@ -28,11 +28,11 @@
 
 
     % Tytuł projektu
-    {\Huge \textbf{Nazwa Projektu: Delinek}\par}
+    {\Huge \textbf{Nazwa Kodowa Projektu: Delinek}\par}
     \vspace{0.5cm}
 
     % Nazwa kodowa
-    {\Large Tematyka: System zarządzający szkołą pływania\par}
+    {\Large Pełna nazwa projektu: System zarządzający szkołą pływania "Delfinek"\par}
     \vspace{2cm}
 
     % Skład zespołu
@@ -1371,7 +1371,9 @@ Historyjki użytkownika częściowo uzupełniono, tworząc następujące kryteri
 
 \section{Architektura logiczna projektu}
  
-Projekt \textit{System Zarządzania Szkołą Pływania ,,Delfinek''} oparty jest na trójwarstwowej architekturze klient--serwer. Centralnym elementem systemu jest serwer aplikacyjny zrealizowany w technologii \textbf{Java} z frameworkiem \textbf{Spring Boot}, komunikujący się z relacyjną bazą danych \textbf{PostgreSQL} za pośrednictwem warstwy persystencji \textbf{JPA/Hibernate}. Warstwa kliencka obejmuje aplikację webową dostępną z poziomu przeglądarki oraz dedykowany panel administratora zintegrowany w tej samej aplikacji.
+Cały ten punkt dokumentacji stanowi opis jak projekt zostałby zaimplementowany w całości w wersji produkcyjnej. W praktyce na obecnym etapie implementacja stanowi uproszczoną wersję - prototyp interfejsu użytkownika oraz aplikacja realizująca część z funkcjonalności backendowych w uproszczony sposób - bez bazy danych, w pamięci, w czystej Javie.
+
+Projekt \textit{System Zarządzania Szkołą Pływania ,,Delfinek''} oparty jest na trójwarstwowej architekturze klient--serwer. Centralnym elementem systemu w pełnej wersji implementacyjnej byłby serwer aplikacyjny zrealizowany w technologii \textbf{Java} z frameworkiem \textbf{Spring Boot}, komunikujący się z relacyjną bazą danych \textbf{PostgreSQL} za pośrednictwem warstwy persystencji \textbf{JPA/Hibernate}. Warstwa kliencka obejmuje aplikację webową dostępną z poziomu przeglądarki oraz dedykowany panel administratora zintegrowany w tej samej aplikacji. W praktyce zrealizowana została uproszczona wersja aplikacji serwerowej, dla prostoty napisana w czystej Javie 21, bez bazy danych, "baza danych" w pamięci aplikacji.
  
 \subsection{Warstwy systemu}
  
@@ -1531,7 +1533,7 @@ Poniższy schemat przedstawia warstwową architekturę systemu oraz przepływ ko
 \toprule
 Obszar & Technologia & Rola w systemie \\
 \midrule
-Język backendowy   & Java (JDK 25)         & Implementacja logiki biznesowej \\
+Język backendowy   & Java (JDK 21)         & Implementacja logiki biznesowej \\
 Framework backend  & Spring Boot            & Serwer HTTP, IoC, konfiguracja \\
 REST API           & Spring Web MVC         & Endpointy HTTP, serializacja JSON \\
 Bezpieczeństwo     & Spring Security + JWT  & Uwierzytelnianie, autoryzacja RBAC \\
@@ -1599,7 +1601,100 @@ Utworzono lo-fi prototyp interfejsu użytkownika w programie Moqups. Link do pob
 
 \section{Diagramy klas i sekwencji}
 
-Sporządzono diagram klas dla architektury, a także odpowiednie diagramy sekwencji dla implementowanych w przyszłości funkcjonalności. Ze względu na ich nieczytelnośc, nie umieszczono ich w tym dokumencie, pliki .puml oraz .png z diagramami są załączane w repozytorium githubowym.
+Sporządzono diagram klas dla architektury, a także odpowiednie diagramy sekwencji dla implementowanych w przyszłości funkcjonalności. Diagramy w czytelniejszej wersji można znaleźć w repozytorium na githubie w odpowiednich katalogach - pliki png oraz .puml
+
+\vspace{0,2cm}
+
+\noindent Diagram klas w minimalistycznej wersji w celach pokazowych (bez niektórych zależności, pełny znajduje się w repozytorium na githubie): 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{DiagramKlasMinimalistyczny.png}
+    \caption{Minimalistyczny diagram klas}
+    \label{fig:placeholder}
+\end{figure}
+
+
+\vspace{0,2cm}
+
+\noindent Diagramy sekwencji systemu:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{anulowanieZapisuSekwencja.png}
+    \caption{Diagram sekwencji - anulowanie zapisu na zajęcia}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{dodanieZajecDoHarmonogramuSekwencja.png}
+    \caption{Diagram sekwencji - dodanie zajęć do harmonogramu}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{edycjaZajecSekwencja.png}
+    \caption{Diagram sekwencji - edycja zajęć}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{InstruktorHarmonogramSekwencja.png}
+    \caption{Diagram sekwencji - Harmonogram instruktora}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{komunikacjaZKursantemIPowiadomieniaSekwencja.png}
+    \caption{Diagram sekwencji - komunikacja i powiadomienia}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{komunikatSekwencja.png}
+    \caption{Diagram sekwencji - komunikat}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{logowanieSekwencja.png}
+    \caption{Diagram sekwencji - logowanie}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{usuwanieZajecSekwencja.png}
+    \caption{Diagram sekwencji - usuwanie zajęć}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{wiadomosciSekwencja.png}
+    \caption{Diagram sekwencji - czat}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{zapisNaZajeciaSekwencja.png}
+    \caption{Diagram sekwencji - zapis na zajęcia}
+    \label{fig:placeholder}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{zmianaRoliSekwencja.png}
+    \caption{Diagram sekwencji - zmiana roli użytkownika}
+    \label{fig:placeholder}
+\end{figure}
+
 
 \section{Raport z badań interfejsu użytkownika}
 
@@ -1713,6 +1808,117 @@ Przeprowadzone badanie z udziałem 5 użytkowników dostarczyło kluczowych wnio
     \item Istotne braki dotyczyły również dostępności informacji kontekstowych, takich jak szczegóły dotyczące instruktora, godziny zajęć czy zakres wykonywanych operacji, co utrudniało podejmowanie decyzji w systemie.
     \item Pomimo wskazanych niedociągnięć, ogólny odbiór prototypu był pozytywny, a struktura systemu została oceniona jako przejrzysta.
 \end{itemize}
+
+\section{Implementacja projektu}
+
+Zgodnie z pierwszym paragrafem punktu 6, w obecnej wersji projektu, nie zaimplementowano pełnej wersji produkcyjnej projektu. Frontend pozostawiono na etapie prototypu interfejsu. Backend zaimplementowano w uproszczonej formie - bez rzeczywistej bazy danych, jedynie z "bazą danych" w pamięci komputera, a co za tym również idzie bez przesyłania requestów poprzez REST API. Dla prostoty i uniknięcia niepotrzebnych komplikacji w tej uproszczonej wersji implementacyjnej nie zastosowano frameworka Spring Boot, kod napisano w Javie, testowano na wersji Java 21.
+
+\subsection{Logika backendu}
+
+Zaimplementowany backend to aplikacja napisana w czystej Javie 21 (na innej projekt może nie działać, testy jednostkowe nie działają!), bez użycia frameworków (Spring Boot, Hibernate itp.) ani rzeczywistej bazy danych. Zamiast bazy danych dane przechowywane są w pamięci aplikacji (tzw. \textit{in-memory}). Cały projekt jest zorganizowany w kilka pakietów, opisanych w kolejnych podpunktach.
+
+\subsubsection*{Pakiet \texttt{model}}
+
+Zawiera klasy reprezentujące obiekty dziedziny systemu. Główna klasa bazowa to \texttt{Uzytkownik}, po której dziedziczą trzy klasy: \texttt{Klient}, \texttt{Instruktor} oraz \texttt{Administrator}. Każdy użytkownik posiada identyfikator, imię, nazwisko, adres e-mail, hasło, numer telefonu i datę urodzenia. Klasa \texttt{Klient} przechowuje dodatkowo poziom zaawansowania pływania oraz listę powiadomień. Klasa \texttt{Instruktor} zawiera opis.
+
+Pozostałe klasy modelu:
+
+\begin{itemize}
+    \item \texttt{Zajecia} -- reprezentuje jeden termin zajęć w harmonogramie (data, godzina, czas trwania, typ zajęć, maksymalna liczba miejsc, cykliczność, przypisany instruktor i tor). Liczba wolnych miejsc nie jest polem w klasie -- jest wyliczana dynamicznie na podstawie listy aktualnych uczestników metodą \texttt{getLiczbaMiejscWolnych()}.
+    \item \texttt{Zapis} -- powiązanie klienta z zajęciami; przechowuje status (aktywny lub anulowany).
+    \item \texttt{Tor} -- tor basenowy ze statusem (wolny, zajęty, remont) oraz metodą sprawdzającą dostępność w danym przedziale czasowym.
+    \item \texttt{Konwersacja} i \texttt{Wiadomosc} -- obsługa czatu; konwersacja posiada dwóch uczestników i listę wiadomości.
+    \item \texttt{Powiadomienie} -- powiadomienie dla użytkownika z typem, tytułem i treścią.
+\end{itemize}
+
+Typy wyliczeniowe - zgodne z diagramem klas.
+
+\subsubsection*{Pakiet \texttt{dto}}
+
+Zawiera klasy DTO (Data Transfer Object) -- czyli obiekty do przekazywania danych wejściowych do serwisów:
+
+\begin{itemize}
+    \item \texttt{RegistrationDTO} -- dane rejestracji nowego klienta (imię, nazwisko, e-mail, hasło, telefon, data urodzenia).
+    \item \texttt{ZajeciaDTO} -- dane potrzebne do utworzenia lub edycji zajęć (data i godzina, czas trwania, typ zajęć, id instruktora, id toru, liczba miejsc, uwagi, cykliczność, data końca cyklu).
+\end{itemize}
+
+\subsubsection*{Pakiet \texttt{exception}}
+
+Zawiera własne wyjątki domenowe zamiast ogólnych wyjątków Javy:
+
+\begin{itemize}
+    \item \texttt{ValidationException} -- niepoprawne dane wejściowe (np. błędny format hasła, brakujące pole).
+    \item \texttt{ConflictException} -- konflikt biznesowy (np. tor lub instruktor już zajęty w danym terminie).
+    \item \texttt{NotFoundException} -- nie znaleziono obiektu o podanym id.
+    \item \texttt{BusinessException} -- ogólny błąd logiki biznesowej (np. brak wolnych miejsc na zajęciach).
+\end{itemize}
+
+\subsubsection*{Pakiet \texttt{repository}}
+
+Repozytoria symulują warstwę dostępu do danych. Klasa abstrakcyjna \texttt{InMemoryRepository<T>} dostarcza wspólną implementację operacji CRUD -- przechowuje obiekty w mapie (\texttt{ConcurrentHashMap}) i automatycznie nadaje im kolejne identyfikatory (\texttt{AtomicLong}). Każde konkretne repozytorium rozszerza tę klasę i może dodawać własne metody wyszukiwania.
+
+Zaimplementowane repozytoria:
+
+\begin{itemize}
+    \item \texttt{UzytkownikRepository} -- wyszukiwanie po e-mailu i po roli.
+    \item \texttt{ZajeciaRepository} -- wyszukiwanie po przedziale dat, po instruktorze, a także wykrywanie konfliktów terminu toru i instruktora.
+    \item \texttt{ZapisRepository} -- wyszukiwanie zapisów po kliencie i pobieranie aktywnych uczestników zajęć.
+    \item \texttt{TorRepository} -- wyszukiwanie torów po statusie.
+    \item \texttt{PowiadomienieRepository} -- wyszukiwanie powiadomień po odbiorcy.
+    \item \texttt{KonwersacjaRepository} -- wyszukiwanie konwersacji pomiędzy dwoma konkretnymi użytkownikami.
+\end{itemize}
+
+\subsubsection*{Pakiet \texttt{service} i \texttt{service.impl}}
+
+Serwisy zawierają całą logikę biznesową aplikacji. Każdy serwis jest zdefiniowany jako interfejs w pakiecie \texttt{service}, a jego implementacja znajduje się w pakiecie \texttt{service.impl}. Zaimplementowano następujące serwisy:
+
+\begin{itemize}
+    \item \texttt{HarmonogramSerwis} / \texttt{HarmonogramSerwisImpl} -- zarządzanie harmonogramem zajęć: dodawanie (z obsługą zajęć cyklicznych), edycja (ze sprawdzaniem konfliktów terminu z wyłączeniem edytowanych zajęć), usuwanie (opcjonalnie cykliczne -- usuwa wszystkie przyszłe wystąpienia danego cyklu), pobieranie harmonogramu w zadanym przedziale dat, przydział instruktora lub toru do istniejących zajęć.
+
+    \item \texttt{ZapisSerwis} / \texttt{ZapisSerwisImpl} -- obsługa zapisów klientów na zajęcia: zapis klienta (ze sprawdzeniem dostępności miejsc i powiadomieniem instruktora), anulowanie zapisu (opcjonalnie cykliczne -- anuluje zapisy na wszystkie przyszłe zajęcia tego samego cyklu), pobieranie zapisów klienta i listy kursantów.
+
+    \item \texttt{UzytkownikSerwis} / \texttt{UzytkownikSerwisImpl} -- rejestracja nowego klienta z walidacją danych (format e-mail, długość numeru telefonu, złożoność hasła: minimum 6 znaków, wielka litera, cyfra i znak specjalny), zmiana roli użytkownika, obsługa resetu hasła przez kod jednorazowy przechowywany w mapie w pamięci.
+
+    \item \texttt{ChatSerwis} / \texttt{ChatSerwisImpl} -- obsługa czatu: pobranie istniejącej lub utworzenie nowej konwersacji między dwoma użytkownikami, wysyłanie wiadomości (z powiadomieniem drugiego uczestnika), pobieranie historii wiadomości.
+
+    \item \texttt{PowiadomienieSerwis} / \texttt{PowiadomienieSerwisImpl} -- wysyłanie powiadomień do odbiorców: po zapisie klienta, po anulowaniu zapisu, po zmianie harmonogramu, po pojawieniu się nowego kursanta, oraz masowe komunikaty administratora do wybranej grupy ról (np. wszyscy klienci). Każde powiadomienie jest zapisywane w repozytorium i dołączane do obiektu odbiorcy. Dla wybranych zdarzeń (np. zmiana harmonogramu, potwierdzenie zapisu) wywoływana jest symulowana wysyłka e-maila przez \texttt{MailSerwis}.
+
+    \item \texttt{TorSerwis} / \texttt{TorSerwisImpl} -- zarządzanie torami basenowymi: sprawdzanie dostępności toru w podanym przedziale czasu, zgłaszanie i kończenie remontu (zmiana statusu toru).
+
+    \item \texttt{MailSerwis} / \texttt{MailSerwisImpl} -- symulowana wysyłka e-maili: zamiast rzeczywistego serwera SMTP, metody jedynie wypisują treść wiadomości na konsolę. Interfejs jest przygotowany pod podłączenie prawdziwego \texttt{JavaMailSender} w przyszłości.
+
+    \item \texttt{TokenSerwis} / \texttt{TokenSerwisImpl} -- generowanie i weryfikacja tokenów (w uproszczonej wersji jako losowe ciągi znaków), używanych przy resecie hasła.
+\end{itemize}
+
+\subsubsection*{Klasa \texttt{Main}}
+
+Klasa \texttt{Main} pełni rolę demonstracyjną -- prezentuje kolejno działanie całego systemu bez interfejsu użytkownika ani REST API. Ręcznie tworzy wszystkie repozytoria i serwisy (wstrzykując zależności przez konstruktory), a następnie wykonuje scenariusz testowy obejmujący:
+
+\begin{enumerate}
+    \item Inicjalizację danych: dodanie administratora, instruktora i dwóch torów.
+    \item Rejestrację klientów (w tym próbę rejestracji z niepoprawnym hasłem, która kończy się wyjątkiem \texttt{ValidationException}).
+    \item Dodanie serii zajęć cyklicznych (co tydzień przez cztery tygodnie) oraz próbę dodania kolidujących zajęć na tym samym torze, zakończoną wyjątkiem \texttt{ConflictException}.
+    \item Zapis dwóch klientów na pierwsze zajęcia i wyświetlenie liczby wolnych miejsc.
+    \item Anulowanie zapisu jednego klienta i weryfikację aktualizacji liczby miejsc.
+    \item Edycję godziny zajęć i wyświetlenie powiadomień wysłanych do uczestnika.
+    \item Wymianę wiadomości przez czat między instruktorem a klientem.
+    \item Wysłanie komunikatu masowego do wszystkich klientów przez administratora.
+    \item Zgłoszenie i zakończenie remontu toru.
+    \item Cykliczne usunięcie wszystkich przyszłych zajęć z cyklu.
+\end{enumerate}
+
+\subsubsection*{Testy jednostkowe}
+
+W katalogu testowym (\texttt{src/test/java}) umieszczono klasy testowe dla wszystkich zaimplementowanych backendowych klas. Zaimplementowano testy jednostkowe z Mockowaniem, testujące najważniejsze funkcjonalności i zależności projektu. Łącznie zaimplementowano 107 testów jednostkowych. Testy należy uruchamiać na Javie 21 lub 17!:
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{pokrycieTestami.jpg}
+    \caption{Pokrycie testami projektu}
+    \label{fig:placeholder}
+\end{figure}
+
+\noindent Uzyskano satysfakcjonujące pokrycie testami, uwzględniając to, że nie testowano Maina, prostych metod takich jak niektóre gettery, settery, konstruktory czy metody pomocnicze, w serwisach rozdzielono również prototypy metod - interfejsy, od implementacji - klasy dziedziczące, co również powoduje fałszywe zniekształcenie pokrycia testowego, fałszywe zaniżenie - nie testowano interfejsów.
 
 
 \end{document}
