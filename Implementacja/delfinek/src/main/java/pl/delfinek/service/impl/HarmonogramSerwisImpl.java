@@ -24,16 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Implementacja HarmonogramSerwis - serce systemu zarządzania harmonogramem.
- *
- * Odwzorowuje trzy główne przepływy z diagramów sekwencji:
- *  1) dodanieZajecDoHarmonogramuSekwencja.puml - walidacja DTO, sprawdzenie konfliktu
- *     toru i instruktora, wygenerowanie wszystkich terminów wg cykliczności,
- *     zapis, powiadomienie instruktora o nowych zajęciach.
- *  2) edycjaZajecSekwencja.puml - sprawdzenie konfliktu (z wyłączeniem siebie samych),
- *     aktualizacja, powiadomienie instruktora + zapisanych kursantów + e-mail.
- *  3) usuwanieZajecSekwencja.puml - usunięcie (opcjonalnie cyklicznie wszystkich
- *     przyszłych wystąpień), powiadomienie instruktora + kursantów.
+ * Harmonogram Serwis implementacja - obsługa funkcjonalności harmonogramu
  */
 public class HarmonogramSerwisImpl implements HarmonogramSerwis {
 
